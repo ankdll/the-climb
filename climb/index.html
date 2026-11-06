@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <!-- Keep The Climb out of search results: only people with the link find it. -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>The Climb</title>
+  <meta name="apple-mobile-web-app-title" content="The Climb">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23f3eee4'/%3E%3Cpath d='M3 27 L13 15 L18 20 L22 16 L29 27 Z' fill='%232a2621'/%3E%3Cpath d='M22 16 V6' stroke='%232a2621' stroke-width='1.8'/%3E%3Cpath d='M22 6 L28 8.5 L22 11 Z' fill='%23ab4a2b'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,0..100;1,9..144,300..700,0..100&family=Instrument+Sans:wght@400..600&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page">
+    <header class="masthead">
+      <a class="wordmark" href="#today">The Climb</a>
+      <nav class="nav" aria-label="Sections">
+        <a href="#today" data-view="today">Today</a>
+        <a href="#map" data-view="map">Map</a>
+        <a href="#progress" data-view="progress">Progress</a>
+        <a href="#portfolio" data-view="portfolio">Portfolio</a>
+      </nav>
+      <a class="guide-link" href="#guide" data-view="guide"><span class="q" aria-hidden="true">?</span>Guide</a>
+    </header>
+
+    <main id="view" tabindex="-1"><p class="loading" role="status">Loading your progress…</p></main>
+
+    <p id="storage-warning" class="storage-warning" hidden>
+      This browser isn't letting The Climb save right now, so progress will only last until you close this tab.
+    </p>
+  </div>
+
+  <noscript><p class="storage-warning">The Climb needs JavaScript turned on to work.</p></noscript>
+
+  <!-- Order matters: where progress is saved, the plans, then the data layer, then the screens. -->
+  <script src="config.js"></script>
+  <script src="vendor/supabase.js"></script>
+  <script src="curriculum.js"></script>
+  <script src="sidemodule-finance.js"></script>
+  <script src="spanish.js"></script>
+  <script src="german.js"></script>
+  <script src="store.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

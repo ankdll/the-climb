@@ -1,0 +1,2349 @@
+/*
+  THE CLIMB — styles
+  Paper, ink, and one accent (persimmon) reserved for "where you are now".
+*/
+
+/* ─── Colour tokens ─────────────────────────────────────────────────── */
+
+:root {
+  --paper: #f3eee4;        /* page */
+  --sheet: #fbf8f2;        /* cards */
+  --ink: #2a2621;          /* main text */
+  --ink-soft: #544c43;     /* secondary text */
+  --muted: #756b5e;        /* labels, quiet text */
+  --rule: #e2d9c9;         /* lines and borders */
+  --tape: #e6dccb;         /* washi tape */
+  --tape-line: #d8ccb7;
+  --shadow: 0 1px 0 rgba(60, 45, 25, 0.04), 0 8px 24px -12px rgba(60, 45, 25, 0.18);
+  --accent: #ab4a2b;       /* current position only */
+  --accent-wash: rgba(171, 74, 43, 0.08);
+  --accent-spanish: #5f6b22;  /* olive: Spanish's "where you are" */
+  --accent-spanish-wash: rgba(95, 107, 34, 0.09);
+  --accent-german: #3b5b7c;   /* slate: German's */
+  --accent-german-wash: rgba(59, 91, 124, 0.09);
+  --field-border: #948877; /* outlines of boxes you type in (3:1 contrast) */
+  --button-ink: #2a2621;
+  --button-text: #fbf8f2;
+  --focus: #2a2621;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1a1816;
+    --sheet: #23201c;
+    --ink: #eee7da;
+    --ink-soft: #cfc5b5;
+    --muted: #a09584;
+    --rule: #38322b;
+    --tape: #3a342d;
+    --tape-line: #463f36;
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 10px 28px -14px rgba(0, 0, 0, 0.6);
+    --accent: #e3825e;
+    --accent-wash: rgba(227, 130, 94, 0.1);
+    --accent-spanish: #b8c46c;
+    --accent-spanish-wash: rgba(184, 196, 108, 0.1);
+    --accent-german: #8fb1d6;
+    --accent-german-wash: rgba(143, 177, 214, 0.1);
+    --field-border: #7d7263;
+    --button-ink: #eee7da;
+    --button-text: #1a1816;
+    --focus: #eee7da;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #1a1816;
+  --sheet: #23201c;
+  --ink: #eee7da;
+  --ink-soft: #cfc5b5;
+  --muted: #a09584;
+  --rule: #38322b;
+  --tape: #3a342d;
+  --tape-line: #463f36;
+  --shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 10px 28px -14px rgba(0, 0, 0, 0.6);
+  --accent: #e3825e;
+  --accent-wash: rgba(227, 130, 94, 0.1);
+  --accent-spanish: #b8c46c;
+  --accent-spanish-wash: rgba(184, 196, 108, 0.1);
+  --accent-german: #8fb1d6;
+  --accent-german-wash: rgba(143, 177, 214, 0.1);
+  --field-border: #7d7263;
+  --button-ink: #eee7da;
+  --button-text: #1a1816;
+  --focus: #eee7da;
+  color-scheme: dark;
+}
+
+/* ─── Type scale ────────────────────────────────────────────────────── */
+
+:root {
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+
+  --step--1: 0.8125rem;   /* 13px labels */
+  --step-0: 1rem;         /* 16px body */
+  --step-1: 1.1875rem;    /* 19px */
+  --step-2: 1.5rem;       /* 24px */
+  --step-3: clamp(1.75rem, 1.4rem + 1.6vw, 2.375rem); /* task title */
+  --step-4: clamp(2rem, 1.6rem + 2vw, 2.75rem);
+}
+
+/* ─── Base ──────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scrollbar-gutter: stable; /* stops the page shifting sideways between short and long screens */
+}
+
+/* the little up/down arrows Chrome puts in number boxes would cover the "min" label */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.55;
+  overflow-wrap: break-word; /* long pasted links wrap instead of widening the page */
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+#view:focus {
+  outline: none;
+}
+
+.page {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding-block: 1.5rem 4rem;
+  /* the side gutter also clears a phone's notch or home bar when turned sideways */
+  padding-left: max(1rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1rem, env(safe-area-inset-right, 0px));
+}
+
+@media (min-width: 40rem) {
+  .page {
+    padding-block: 2.5rem 5rem;
+    padding-left: max(1.5rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1.5rem, env(safe-area-inset-right, 0px));
+  }
+}
+
+/* ─── Masthead ──────────────────────────────────────────────────────── */
+
+/* Phone: name and Guide on one line, the sections under them.
+   Wider: name, sections, then Guide, all on one line. */
+.masthead {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "brand guide"
+    "nav   nav";
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 2.25rem;
+}
+
+@media (min-width: 40rem) {
+  .masthead {
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "brand nav guide";
+  }
+  .masthead .nav {
+    justify-self: end;
+  }
+}
+
+.masthead .wordmark { grid-area: brand; justify-self: start; }
+.masthead .nav { grid-area: nav; }
+
+.guide-link {
+  grid-area: guide;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.75rem;
+  color: var(--muted);
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.guide-link .q {
+  display: inline-grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.guide-link:hover,
+.guide-link[aria-current="page"] {
+  color: var(--ink);
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  font-weight: 500;
+  font-style: italic;
+  font-variation-settings: "SOFT" 100, "opsz" 72;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  gap: 1.25rem;
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.nav a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.6rem 0 0.25rem;
+  border-bottom: 1px solid transparent;
+}
+
+.nav a:hover {
+  color: var(--ink);
+}
+
+.nav a[aria-current="page"] {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+
+/* ─── Shared bits ───────────────────────────────────────────────────── */
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  min-height: 2.75rem;
+  padding: 0.6rem 1.15rem;
+  border: 1px solid var(--button-ink);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.btn:hover {
+  background: var(--accent-wash);
+}
+
+.btn-solid {
+  background: var(--button-ink);
+  color: var(--button-text);
+}
+
+.btn-solid:hover {
+  background: var(--button-ink);
+  opacity: 0.88;
+}
+
+.btn .arrow {
+  font-size: 0.9em;
+}
+
+.link-button {
+  padding: 0.6rem 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.9375rem;
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 0.25em;
+  cursor: pointer;
+}
+
+.link-button:hover {
+  color: var(--ink);
+  text-decoration-color: currentColor;
+}
+
+/* ─── Today: orientation line ───────────────────────────────────────── */
+
+.orientation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.6rem;
+  margin: 0 0 1.25rem;
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.orientation .day {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.orientation .sep {
+  opacity: 0.6;
+}
+
+/* ─── Today: the task card ──────────────────────────────────────────── */
+
+.card {
+  position: relative;
+  padding: 2rem 1.5rem 1.5rem 2.25rem;
+  background: var(--sheet);
+  border-radius: 4px;
+  box-shadow: var(--shadow);
+}
+
+/* the notebook margin line: marks "this is where you are" */
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 1.1rem;
+  width: 2px;
+  background: var(--accent);
+  opacity: 0.85;
+}
+
+/* a strip of washi tape holding the card down */
+.card::after,
+.pf-card.is-done::after {
+  content: "";
+  position: absolute;
+  top: -0.7rem;
+  right: 1.75rem;
+  width: 5.5rem;
+  height: 1.4rem;
+  background:
+    repeating-linear-gradient(-45deg, var(--tape-line) 0 2px, transparent 2px 7px),
+    var(--tape);
+  opacity: 0.9;
+  transform: rotate(3deg);
+  clip-path: polygon(3% 0, 97% 4%, 100% 50%, 96% 100%, 2% 96%, 0 50%);
+}
+
+.task-kind {
+  margin: 0 0 0.6rem;
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.task-title {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display);
+  font-size: var(--step-3);
+  font-weight: 450;
+  font-variation-settings: "SOFT" 50, "opsz" 96;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.task-detail {
+  margin: 0 0 1.75rem;
+  max-width: 34rem;
+  color: var(--ink-soft);
+  font-size: var(--step-1);
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.not-today {
+  margin-top: 1.25rem;
+}
+
+/* the "how long did it take?" box */
+.log-form {
+  display: grid;
+  gap: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed var(--rule);
+}
+
+.log-form .prompt {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  font-style: italic;
+  font-variation-settings: "SOFT" 100;
+}
+
+.log-fields {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 0.75rem;
+}
+
+@media (max-width: 20rem) {
+  .log-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field {
+  display: grid;
+  gap: 0.3rem;
+  font-size: var(--step--1);
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.field input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--field-border);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--step-0);
+  letter-spacing: normal;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+.field .unit {
+  position: relative;
+}
+
+.field .unit input {
+  padding-right: 2.75rem;
+}
+
+.field .unit span {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.log-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.kbd-hint {
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+/* keyboard hints mean nothing on a touchscreen */
+@media (hover: none) {
+  .kbd-hint {
+    display: none;
+  }
+}
+
+/* Touch screens: every link and button gets a fingertip-sized (44px) target.
+   The padding and matching negative margin grow the tap area without moving anything. */
+@media (pointer: coarse) {
+  .nav a {
+    display: inline-flex;
+    align-items: flex-end;
+    min-height: 2.75rem;
+    padding-top: 0;
+  }
+  .t-title a,
+  .extras a,
+  .as-table summary {
+    display: inline-block;
+    padding-block: 0.75rem;
+    margin-block: -0.75rem;
+  }
+}
+
+/* ─── Today: status line and what's next ────────────────────────────── */
+
+.status {
+  min-height: 1.5rem;
+  margin: 1.25rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+}
+
+.status:empty {
+  min-height: 0;
+  margin: 0;
+}
+
+.status .link-button {
+  margin-left: 0.4rem;
+  font-size: inherit;
+}
+
+.next {
+  margin-top: 2.5rem;
+}
+
+.next h2,
+.next h3 {
+  margin: 0 0 0.5rem;
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.next ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.next li {
+  display: grid;
+  grid-template-columns: 4.25rem 1fr auto;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+}
+
+.next li:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+.next .n-day {
+  font-size: var(--step--1);
+  letter-spacing: 0.04em;
+}
+
+.next .n-title {
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  font-variation-settings: "SOFT" 50;
+  line-height: 1.3;
+  color: var(--ink-soft);
+  opacity: 0.75;
+}
+
+.next .n-mins {
+  font-size: var(--step--1);
+  white-space: nowrap;
+}
+
+.next .n-module {
+  display: block;
+  margin-top: 0.15rem;
+  font-family: var(--font-body);
+  font-size: var(--step--1);
+  color: var(--muted);
+  opacity: 1;
+}
+
+@media (max-width: 26rem) {
+  .next li {
+    grid-template-columns: 1fr auto;
+  }
+  .next .n-day {
+    grid-column: 1 / -1;
+    margin-bottom: -0.5rem;
+  }
+  .next .n-title {
+    font-size: var(--step-0);
+  }
+}
+
+.last-session {
+  margin-top: 2rem;
+  font-size: 0.9375rem;
+  color: var(--muted);
+}
+
+.last-session q {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+/* ─── Map: intro and mountain outline ───────────────────────────────── */
+
+.screen-title {
+  margin: 0 0 1.5rem;
+  font-family: var(--font-display);
+  font-size: var(--step-3);
+  font-weight: 450;
+  font-variation-settings: "SOFT" 50, "opsz" 96;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.profile {
+  margin: 0 0 3rem;
+}
+
+.profile-art {
+  position: relative;
+}
+
+.profile svg {
+  display: block;
+  width: 100%;
+  height: 7.5rem;
+  overflow: visible;
+}
+
+.profile-marks {
+  position: absolute;
+  inset: 0 0 auto 0;
+}
+
+.profile .land {
+  fill: var(--rule);
+  opacity: 0.45;
+}
+
+.profile .climbed,
+.profile .ahead {
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.profile .climbed {
+  stroke: var(--ink);
+  stroke-width: 2.25;
+}
+
+.profile .ahead {
+  stroke: var(--muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 1 5;
+}
+
+.profile .camp line {
+  stroke: var(--muted);
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+}
+
+.profile .camp path {
+  fill: var(--paper);
+  stroke: var(--muted);
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+}
+
+.profile .camp.is-done line {
+  stroke: var(--ink);
+}
+
+.profile .camp.is-done path {
+  fill: var(--ink);
+  stroke: var(--ink);
+}
+
+.profile .you {
+  position: absolute;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin: -0.4375rem 0 0 -0.4375rem;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--paper);
+}
+
+.profile-labels {
+  display: grid;
+  margin-top: 0.6rem;
+  border-top: 1px solid var(--rule);
+  font-size: var(--step--1);
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.profile-labels span {
+  padding: 0.4rem 0.25rem 0 0;
+  border-left: 1px solid var(--rule);
+  padding-left: 0.4rem;
+  line-height: 1.3;
+}
+
+.profile-labels span:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+
+.profile-labels .is-current {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ─── Map: the trail of phases ──────────────────────────────────────── */
+
+.trail {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stop {
+  position: relative;
+  padding: 0 0 2.5rem 2.75rem;
+}
+
+/* the path between stops: walked = solid ink, ahead = dotted */
+.stop::before {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  top: 2rem;
+  bottom: 0.25rem;
+  border-left: 2px dotted var(--muted);
+  opacity: 0.6;
+}
+
+.stop.is-done::before {
+  border-left: 2px solid var(--ink);
+  opacity: 1;
+}
+
+.stop:last-child::before {
+  display: none;
+}
+
+.marker {
+  position: absolute;
+  left: 0;
+  top: 0.2rem;
+  display: grid;
+  place-items: center;
+  width: 1.625rem;
+  height: 1.625rem;
+  border: 2px solid var(--muted);
+  border-radius: 50%;
+  background: var(--paper);
+}
+
+.marker svg,
+.tick svg {
+  width: 70%;
+  height: 70%;
+  fill: none;
+  stroke: var(--button-text);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+}
+
+.stop.is-done .marker {
+  border-color: var(--ink);
+  background: var(--ink);
+}
+
+.stop.is-done .marker svg {
+  opacity: 1;
+}
+
+.stop.is-current .marker {
+  border-color: var(--accent);
+}
+
+.stop.is-current .marker::after {
+  content: "";
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.stop-h,
+.module-h {
+  margin: 0;
+  font: inherit;
+}
+
+.stop-head,
+.module-head {
+  display: grid;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.p-days {
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.p-name {
+  margin: 0.2rem 0 0.35rem;
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  font-weight: 500;
+  font-variation-settings: "SOFT" 50, "opsz" 72;
+  line-height: 1.2;
+}
+
+.stop-head:hover .p-name {
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.stop-head .p-name::after {
+  content: "+";
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.75em;
+  font-weight: 400;
+  color: var(--muted);
+  transition: transform 200ms ease;
+}
+
+.stop-head[aria-expanded="true"] .p-name::after {
+  transform: rotate(45deg);
+}
+
+.stop.is-upcoming .p-name {
+  color: var(--ink-soft);
+}
+
+.p-state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+  font-size: 0.9375rem;
+  color: var(--muted);
+}
+
+.here {
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* a finished phase gets an ink stamp */
+.stamp {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 3px;
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  transform: rotate(-2deg);
+}
+
+.p-deliverable {
+  margin: 0.6rem 0 0;
+  max-width: 34rem;
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+}
+
+.p-deliverable span,
+.m-skill span {
+  display: block;
+  margin-bottom: 0.1rem;
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.stop.is-upcoming .p-deliverable {
+  color: var(--muted);
+}
+
+/* opening a phase or module: the content unfolds */
+.fold {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows 280ms ease, visibility 0s 280ms;
+}
+
+.fold.open {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows 280ms ease, visibility 0s;
+}
+
+.fold-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fold,
+  .fold.open {
+    transition: none;
+  }
+}
+
+.modules {
+  margin-top: 1.25rem;
+  background: var(--sheet);
+  border-radius: 4px;
+  box-shadow: var(--shadow);
+}
+
+/* ─── Map: modules ──────────────────────────────────────────────────── */
+
+.module {
+  position: relative;
+  border-top: 1px solid var(--rule);
+}
+
+.module:first-child {
+  border-top: 0;
+}
+
+.module.is-current::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+}
+
+.module-head {
+  grid-template-columns: 1fr auto;
+  gap: 0.15rem 1rem;
+  padding: 1rem 1.25rem;
+}
+
+.m-days {
+  grid-column: 1 / -1;
+  font-size: var(--step--1);
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.m-name {
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  font-variation-settings: "SOFT" 50;
+  line-height: 1.3;
+}
+
+.module.is-upcoming .m-name {
+  color: var(--ink-soft);
+}
+
+.m-state {
+  align-self: baseline;
+  font-size: var(--step--1);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.module.is-done .m-state {
+  color: var(--ink);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.m-skill {
+  margin: -0.4rem 1.25rem 1rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-variation-settings: "SOFT" 100;
+  color: var(--ink-soft);
+}
+
+.m-skill span {
+  font-family: var(--font-body);
+  font-style: normal;
+}
+
+/* ─── Map: tasks ────────────────────────────────────────────────────── */
+
+.tasks {
+  list-style: none;
+  margin: 0;
+  padding: 0 1.25rem 0.5rem;
+}
+
+.t {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  padding: 0.6rem 0;
+  border-top: 1px dashed var(--rule);
+}
+
+.tick {
+  display: grid;
+  place-items: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  margin-top: 0.1rem;
+  padding: 0;
+  border: 1.5px solid var(--muted);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+/* bigger tap target without a bigger circle */
+.tick {
+  position: relative;
+}
+
+.tick::after {
+  content: "";
+  position: absolute;
+  inset: -0.6rem;
+}
+
+.tick:hover {
+  border-color: var(--ink);
+}
+
+.tick[aria-pressed="true"] {
+  border-color: var(--ink);
+  background: var(--ink);
+}
+
+.tick[aria-pressed="true"] svg {
+  opacity: 1;
+}
+
+.t-main {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.t-title a,
+.t-title > span:first-child {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.t-title a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--muted);
+  text-underline-offset: 0.2em;
+}
+
+.t.is-done .t-title a,
+.t.is-done .t-title > span:first-child {
+  color: var(--ink-soft);
+}
+
+.t-now {
+  margin-left: 0.5rem;
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.t-meta {
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+.m-notes {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.5rem 1.25rem 1.25rem;
+  font-size: var(--step--1);
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.m-notes textarea {
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--field-border);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9375rem;
+  letter-spacing: normal;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.m-notes textarea:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+/* ─── Map: optional extras ──────────────────────────────────────────── */
+
+.extras {
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  border: 1px dashed var(--rule);
+  border-radius: 4px;
+}
+
+.extras h3 {
+  margin: 0 0 0.5rem;
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.extras h3 span {
+  display: block;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--muted);
+}
+
+.extras ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.extras li {
+  display: grid;
+  padding: 0.4rem 0;
+}
+
+.extras a {
+  text-decoration-color: var(--rule);
+  text-underline-offset: 0.2em;
+}
+
+.extras li span {
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+@media (max-width: 26rem) {
+  .stop {
+    padding-left: 2.25rem;
+  }
+  .module-head,
+  .tasks,
+  .m-notes {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .m-skill {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+}
+
+/* ─── Progress: sections ────────────────────────────────────────────── */
+
+.block {
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+}
+
+.block h2 {
+  margin: 0 0 1rem;
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.block-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.block-head h2 {
+  margin: 0;
+}
+
+.fine {
+  margin: 0.5rem 0 0;
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+.empty {
+  margin: 0;
+  color: var(--muted);
+}
+
+.target {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+.target input {
+  width: 4.25rem;
+  min-height: 2.25rem;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--field-border);
+  border-radius: 4px;
+  background: var(--sheet);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--step-0);
+}
+
+.target input:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+/* ─── Progress: weekly chart ────────────────────────────────────────── */
+
+.chart {
+  padding: 1.5rem 0 1.75rem;
+}
+
+.plot {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  gap: 2px;
+  height: 11rem;
+  border-bottom: 1px solid var(--muted);
+}
+
+.col {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 100%;
+  outline-offset: 2px;
+}
+
+.col:hover {
+  background: var(--accent-wash);
+}
+
+.bar {
+  width: min(70%, 2.25rem);
+  min-height: 3px;
+  border-radius: 4px 4px 0 0;
+  background: var(--ink-soft);
+}
+
+.col.is-now .bar {
+  background: var(--accent);
+}
+
+.bar-value {
+  position: absolute;
+  margin-bottom: 0.3rem;
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.col-label {
+  position: absolute;
+  top: 100%;
+  margin-top: 0.45rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.col.is-now .col-label {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+@media (max-width: 30rem) {
+  .col:nth-child(odd):not(.is-now) .col-label,
+  .col:has(+ .col.is-now) .col-label { /* "This week" is wider; give it room */
+    display: none;
+  }
+}
+
+.tip {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 3;
+  padding: 0.35rem 0.6rem;
+  border-radius: 4px;
+  background: var(--button-ink);
+  color: var(--button-text);
+  font-size: var(--step--1);
+  white-space: nowrap;
+  transform: translate(-50%, -110%);
+  pointer-events: none;
+}
+
+.col:nth-child(-n + 4) .tip {
+  left: 0;
+  transform: translate(0, -110%);
+}
+
+.col:nth-last-child(-n + 3) .tip {
+  left: auto;
+  right: 0;
+  transform: translate(0, -110%);
+}
+
+.col:hover .tip,
+.col:focus-visible .tip {
+  display: block;
+}
+
+.target-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  border-top: 1px dashed var(--muted);
+  pointer-events: none;
+}
+
+.target-line span {
+  position: absolute;
+  right: 0;
+  bottom: 0.2rem;
+  padding-left: 0.4rem;
+  background: var(--paper);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.as-table {
+  margin-top: 0.75rem;
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+.as-table summary {
+  cursor: pointer;
+}
+
+.as-table table {
+  margin-top: 0.5rem;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+}
+
+.as-table th,
+.as-table td {
+  padding: 0.3rem 1.5rem 0.3rem 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  font-weight: 400;
+}
+
+.as-table thead th {
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+/* ─── Progress: streak and skills ───────────────────────────────────── */
+
+.streak {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  font-variation-settings: "SOFT" 50;
+}
+
+.streak .big {
+  font-size: var(--step-4);
+  font-weight: 450;
+  line-height: 1;
+  margin-right: 0.2rem;
+}
+
+.skills {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.skills li {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.75rem 0;
+  border-top: 1px dashed var(--rule);
+}
+
+.skills li:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.skills .fine,
+.skill-next .fine {
+  margin: 0;
+}
+
+.skill-line {
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  font-style: italic;
+  font-variation-settings: "SOFT" 100;
+  line-height: 1.35;
+}
+
+.skill-next {
+  display: grid;
+  gap: 0.15rem;
+  margin: 1rem 0 0;
+  padding: 0.75rem 1rem;
+  border: 1px dashed var(--rule);
+  border-radius: 4px;
+}
+
+.skill-next .skill-line {
+  color: var(--muted);
+}
+
+/* ─── Progress: session log ─────────────────────────────────────────── */
+
+.session-form {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+  margin-bottom: 0.5rem;
+}
+
+.session-form .fine {
+  margin: 0;
+}
+
+.session-fields {
+  display: grid;
+  grid-template-columns: 10.5rem 7rem 1fr;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+@media (max-width: 34rem) {
+  .session-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+  .s-note-field {
+    grid-column: 1 / -1;
+  }
+}
+
+.sessions {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+}
+
+.sessions li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.1rem 1rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--rule);
+}
+
+.s-date {
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+.s-what {
+  grid-column: 1;
+  color: var(--ink);
+}
+
+.s-mins {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.s-note {
+  grid-column: 1;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-variation-settings: "SOFT" 100;
+  color: var(--ink-soft);
+}
+
+.s-remove {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: start;
+  font-size: var(--step--1);
+}
+
+/* ─── Progress: your data ───────────────────────────────────────────── */
+
+.block p {
+  max-width: 34rem;
+}
+
+label.btn {
+  cursor: pointer;
+}
+
+.actions:has(#import-file:focus-visible) label[for="import-file"] {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.theme {
+  margin: 1.75rem 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.theme legend {
+  margin-bottom: 0.5rem;
+  padding: 0;
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--button-ink);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.seg {
+  position: relative;
+  cursor: pointer;
+}
+
+.seg input {
+  position: absolute;
+  opacity: 0;
+}
+
+.seg > span {
+  display: block;
+  padding: 0.5rem 1rem;
+  font-size: 0.9375rem;
+}
+
+.seg input:checked + span {
+  background: var(--button-ink);
+  color: var(--button-text);
+}
+
+.seg input:focus-visible + span {
+  outline: 2px solid var(--focus);
+  outline-offset: -4px;
+  border-radius: 999px;
+}
+
+/* ─── Portfolio ─────────────────────────────────────────────────────── */
+
+.pf-intro .fine {
+  margin: -0.75rem 0 1rem;
+}
+
+.pf-stack {
+  display: grid;
+  gap: 2.75rem;
+  margin-top: 2.5rem;
+}
+
+.pf-card {
+  position: relative;
+  padding: 1.75rem 1.5rem 1.25rem 2.25rem;
+  border-radius: 0 4px 4px 4px;
+}
+
+.pf-card.is-started,
+.pf-card.is-done {
+  background: var(--sheet);
+  box-shadow: var(--shadow);
+}
+
+/* not started: an empty sleeve waiting to be filled */
+.pf-card.is-upcoming {
+  border: 1.5px dashed var(--rule);
+}
+
+/* the current phase gets the same margin line as Today's card */
+.pf-card.is-here::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 1.1rem;
+  width: 2px;
+  background: var(--accent);
+  opacity: 0.85;
+}
+
+/* a folder tab naming the phase */
+.pf-tab {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin: 0;
+  padding: 0.35rem 0.85rem 0.2rem;
+  border-radius: 4px 4px 0 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.pf-card.is-started .pf-tab,
+.pf-card.is-done .pf-tab {
+  background: var(--sheet);
+}
+
+.pf-card.is-upcoming .pf-tab {
+  left: -1.5px;
+  border: 1.5px dashed var(--rule);
+  border-bottom: 0;
+}
+
+.pf-title {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  font-weight: 500;
+  font-variation-settings: "SOFT" 50, "opsz" 72;
+  line-height: 1.2;
+}
+
+.pf-card.is-upcoming .pf-title {
+  color: var(--ink-soft);
+}
+
+.pf-status {
+  font-size: 0.9375rem;
+  color: var(--muted);
+}
+
+.pf-desc {
+  margin: 0.75rem 0 1.25rem;
+  max-width: 34rem;
+  color: var(--ink-soft);
+}
+
+.pf-card.is-upcoming .pf-desc {
+  color: var(--muted);
+}
+
+.pf-link .field {
+  margin-bottom: 0.3rem;
+}
+
+.pf-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pf-link-row input {
+  flex: 1 1 14rem;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--field-border);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9375rem;
+}
+
+.pf-link-row input:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+.pf-link-row input::placeholder,
+.field input::placeholder,
+.m-notes textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.btn[disabled],
+.btn[aria-disabled="true"] {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.btn[disabled]:hover,
+.btn[aria-disabled="true"]:hover {
+  background: transparent;
+}
+
+.pf-msg {
+  min-height: 1.25rem;
+  margin: 0.4rem 0 0;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
+/* ─── Finished ──────────────────────────────────────────────────────── */
+
+.summit .task-title {
+  font-size: var(--step-4);
+}
+
+/* ─── Today: one group per subject ──────────────────────────────────── */
+
+/* Each subject marks "where you are" in its own colour (Data persimmon,
+   Spanish olive, German slate). The accent token is swapped inside a Today
+   group, or on the whole Map and Progress when that subject is chosen, so the
+   card line, day label, "Next up" and this week's bar all follow. */
+.subject[data-subject="spanish"],
+.accent-spanish {
+  --accent: var(--accent-spanish);
+  --accent-wash: var(--accent-spanish-wash);
+}
+
+.subject[data-subject="german"],
+.accent-german {
+  --accent: var(--accent-german);
+  --accent-wash: var(--accent-german-wash);
+}
+
+.subject + .subject {
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--rule);
+}
+
+.subject-h {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  margin: 0 0 0.9rem;
+  font-weight: 400;
+}
+
+.subject-name {
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  font-weight: 500;
+  font-style: italic;
+  font-variation-settings: "SOFT" 100, "opsz" 72;
+}
+
+.subject-meta {
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* The minor's card is a step quieter than the major's. */
+.subject:not([data-subject="data"]) .task-title {
+  font-size: var(--step-2);
+}
+
+.subject .next {
+  margin-top: 1.75rem;
+}
+
+/* Light week's bonus block: a dashed slip under the card, clearly optional. */
+.extra {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px dashed var(--field-border);
+  border-radius: 4px;
+}
+
+.extra p {
+  margin: 0;
+}
+
+.extra-kind {
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.extra-title {
+  font-weight: 600;
+}
+
+.extra-detail {
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+}
+
+.extra .actions {
+  margin-top: 0.5rem;
+}
+
+/* A side module's group: tucked under its subject (same colour), a step
+   quieter, with a dashed rule because it's an extra, not the main path. */
+.subject + .subject.side {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px dashed var(--rule);
+}
+
+.side .subject-name {
+  font-size: var(--step-1);
+}
+
+.side .task-title {
+  font-size: var(--step-2);
+}
+
+/* Extra links for a task, under its detail. */
+.more-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  margin: -1rem 0 1.5rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9375rem;
+}
+
+.more-links a {
+  display: inline-block;
+  padding: 0.35rem 0;
+  color: var(--ink-soft);
+  text-decoration-color: var(--rule);
+  text-underline-offset: 0.2em;
+}
+
+.more-links a:hover {
+  color: var(--ink);
+  text-decoration-color: currentColor;
+}
+
+.more-links .arrow {
+  margin-left: 0.2em;
+  font-size: 0.85em;
+}
+
+/* Map: a side module, under the trail and outside the climb. */
+.side-map {
+  margin-top: 1rem;
+  padding: 1.5rem 1.25rem 1.25rem;
+  border: 1px dashed var(--field-border);
+  border-radius: 4px;
+}
+
+.side-map p {
+  margin: 0;
+}
+
+.side-tag {
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.side-name {
+  margin: 0.35rem 0 0.4rem;
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  font-weight: 500;
+  font-variation-settings: "SOFT" 50, "opsz" 72;
+  line-height: 1.2;
+}
+
+.side-state {
+  font-size: 0.9375rem;
+  color: var(--muted);
+}
+
+.side-map .side-why {
+  max-width: 34rem;
+  margin-top: 0.6rem;
+  color: var(--ink-soft);
+}
+
+.side-map .modules {
+  margin-top: 1rem;
+}
+
+/* Portfolio: side work, after the four phase cards. */
+.pf-side {
+  margin-top: 3.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px dashed var(--rule);
+}
+
+.pf-side-h {
+  margin: 0 0 0.25rem;
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.pf-side-h span {
+  display: block;
+  margin-top: 0.2rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--muted);
+}
+
+/* Light week switch and the bad-week minimum, under the subjects. */
+.week-bar {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 3.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+.week-bar .fine {
+  margin: 0;
+  max-width: 34rem;
+}
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  justify-self: start;
+}
+
+.switch-track {
+  position: relative;
+  width: 2.75rem;
+  height: 1.5rem;
+  border: 1.5px solid var(--field-border);
+  border-radius: 999px;
+  background: var(--sheet);
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.switch-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0.2rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--muted);
+  transform: translateY(-50%);
+  transition: transform 160ms ease, background-color 160ms ease;
+}
+
+.switch[aria-checked="true"] .switch-track {
+  background: var(--button-ink);
+  border-color: var(--button-ink);
+}
+
+.switch[aria-checked="true"] .switch-thumb {
+  background: var(--button-text);
+  transform: translate(1.2rem, -50%);
+}
+
+.switch:focus-visible {
+  outline: none;
+}
+
+.switch:focus-visible .switch-track {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.minimum {
+  margin: 1.5rem 0 0;
+  max-width: 34rem;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
+.minimum-h {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.minimum-now {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Map and Progress: choosing a subject ─────────────────────────── */
+
+.subject-switch {
+  margin: 0 0 2rem;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.seg-note {
+  opacity: 0.7;
+}
+
+/* A subject's settings on Progress, and the boxes that ask before changing them. */
+.setting {
+  display: grid;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+  justify-items: start;
+}
+
+.setting .fine {
+  margin: 0;
+  max-width: 34rem;
+}
+
+.confirm {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--field-border);
+  border-radius: 4px;
+  background: var(--sheet);
+}
+
+.confirm p {
+  margin: 0;
+  max-width: 34rem;
+}
+
+.confirm .status:empty {
+  display: none;
+}
+
+.locked p {
+  max-width: 34rem;
+}
+
+@media (pointer: coarse) {
+  .seg > span {
+    padding-block: 0.75rem;
+  }
+}
+
+/* ─── Guide ─────────────────────────────────────────────────────────── */
+
+.lede {
+  margin: 0 0 1.25rem;
+  max-width: 34rem;
+  font-size: var(--step-1);
+  color: var(--ink-soft);
+}
+
+/* The daily routine is a real sequence, so it keeps its numbers. */
+.steps {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+  max-width: 34rem;
+}
+
+.steps li {
+  position: relative;
+  padding-left: 2.25rem;
+  counter-increment: step;
+}
+
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0.05rem;
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--accent-wash);
+  color: var(--accent);
+  font-size: var(--step--1);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.terms {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  max-width: 34rem;
+}
+
+.terms dt {
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  font-weight: 500;
+}
+
+.terms dd {
+  margin: 0.15rem 0 0;
+  color: var(--ink-soft);
+}
+
+.notes {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding-left: 1.1rem;
+  max-width: 34rem;
+  color: var(--ink-soft);
+}
+
+.notes strong {
+  color: var(--ink);
+}
+
+.guide-end {
+  margin: 3rem 0 0;
+}
+
+/* ─── Loading ───────────────────────────── */
+
+/* Fades in after a moment, so a quick load never flickers a message. */
+.loading {
+  margin: 3rem 0;
+  color: var(--muted);
+  animation: loading-in 300ms ease 400ms both;
+}
+
+@keyframes loading-in {
+  from { opacity: 0; }
+}
+
+/* sign-in (the web version): shown instead of the app until this device is signed in */
+.signed-out .nav,
+.signed-out .guide-link {
+  display: none;
+}
+
+.sign-in {
+  max-width: 34rem;
+  margin: 2.5rem 0 3rem;
+}
+
+.sign-in .lede {
+  margin-bottom: 1.5rem;
+}
+
+.sign-in-form {
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+  margin-bottom: 1rem;
+}
+
+.sign-in-form .field {
+  width: 100%;
+  max-width: 24rem;
+}
+
+.load-problem {
+  margin: 3rem 0;
+  max-width: 34rem;
+  font-size: var(--step-1);
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading { animation: none; }
+}
+
+.storage-warning {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+/* ─── Motion: only for a task completing ────────────────────────────── */
+
+@keyframes settle {
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.985);
+  }
+}
+
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+.card.leaving {
+  animation: settle 260ms ease-in forwards;
+}
+
+.card.arriving {
+  animation: arrive 360ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card.leaving,
+  .card.arriving {
+    animation: none;
+  }
+}
+
+/* ─── Windows High Contrast mode ────────────────────────────────────── */
+
+@media (forced-colors: active) {
+  .card::before,
+  .pf-card.is-here::before,
+  .module.is-current::before,
+  .bar,
+  .profile .you,
+  .stop.is-current .marker::after {
+    forced-color-adjust: none;
+    background: Highlight;
+  }
+  .stop.is-done .marker,
+  .tick[aria-pressed="true"] {
+    forced-color-adjust: none;
+    background: CanvasText;
+    border-color: CanvasText;
+  }
+  .stop.is-done .marker svg,
+  .tick[aria-pressed="true"] svg {
+    stroke: Canvas;
+  }
+  .card::after,
+  .pf-card.is-done::after {
+    display: none;
+  }
+}

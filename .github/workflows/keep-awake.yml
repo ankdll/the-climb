@@ -1,0 +1,27 @@
+# Supabase pauses free projects after about a week without use. This visits
+# the project every three days so a holiday doesn't pause it. It reads the
+# project's address and public key from climb/config.js and touches no data.
+name: Keep Supabase awake
+
+on:
+  schedule:
+    - cron: "17 6 */3 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Visit the project
+        run: |
+          url=$(sed -n 's/.*supabaseUrl: *"\([^"]*\)".*/\1/p' climb/config.js)
+          key=$(sed -n 's/.*supabaseKey: *"\([^"]*\)".*/\1/p' climb/config.js)
+          if [ -z "$url" ] || [ -z "$key" ]; then echo "config.js has no Supabase project yet"; exit 0; fi
+          curl --fail --silent --show-error -X POST "$url/rest/v1/rpc/keep_alive" \
+            -H "apikey: $key" -H "Content-Type: application/json" -d '{}'
+          echo
+          echo "Supabase answered."

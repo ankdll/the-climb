@@ -1,0 +1,3 @@
+# Files that stay on this computer and never go to the public GitHub repository.
+# One path per line. scripts/publish-public.sh leaves them out.
+PRD_Learning_Journey_App.md

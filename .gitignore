@@ -1,0 +1,5 @@
+.DS_Store
+Thumbs.db
+
+# A Chrome profile an old browser test created by mistake: can hold cookies and logins
+undefined/
