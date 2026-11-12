@@ -31,7 +31,8 @@ for(const {name, plan, needsSkill} of PLANS){
     prevEnd=p.dayEnd; total+=pm;
     console.log(`${p.name}: ${p.modules.reduce((a,m)=>a+m.tasks.length,0)} tasks, ${(pm/60).toFixed(1)}h (plan says ~${p.estimatedHours}h)`);
   }
-  if(prevEnd!==plan.totalDays) errs.push(`${name} ends on ${prevEnd}, totalDays is ${plan.totalDays}`);
+  // Phases fill totalDays exactly; a phase may follow after it (Data's Phase 4).
+  if(!plan.phases.some(p=>p.dayEnd===plan.totalDays)) errs.push(`${name}: no phase ends on day ${plan.totalDays}`);
   console.log(`TOTAL ${n} tasks, ${(total/60).toFixed(1)}h`);
 }
 // Side modules: no days, but the same task rules, and ids unique across everything.

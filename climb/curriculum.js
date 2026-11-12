@@ -6,7 +6,8 @@
   in the browser, so editing this file never wipes what you've done.
 
   Shape:
-    phases  → the big stages (three, filling the 180 days)
+    phases  → the big stages. Phases 1–3 fill the 180 days; a phase that starts
+              after day 180 (Phase 4) counts its own days: "Phase 4 · Day 3 of 27"
       modules → a block of days inside a phase (each one unlocks a "skill" line)
         tasks   → one sitting's worth of work. The Today screen shows these in order.
 
@@ -1480,6 +1481,278 @@ const CURRICULUM = {
               detail: "Add your GitHub and site links, and pull lines from the Skills list on the Progress screen. You've earned every one of them.",
               estimatedMinutes: 45,
               url: "",
+              type: "build"
+            }
+          ]
+        }
+      ]
+    },
+
+    // ───────────────────────────────────────────────────────────── PHASE 4
+    // After day 180. The app counts its days on their own: "Phase 4 · Day 3 of 27".
+    {
+      id: "de",
+      name: "Data Engineering",
+      shortName: "Data eng.",
+      dayStart: 181,
+      dayEnd: 207,
+      estimatedHours: 20,
+      why: "Analytics engineers work on the pipelines too: warehouses, Docker, scheduling and dbt. All on the Mac.",
+      deliverable: "A dbt layer on your telecom database: sources, staging and mart models with tests and docs, run locally with DuckDB.",
+      deliverableName: "dbt layer on the telecom database",
+      linkHint: "https://github.com/your-name/telecom-dbt",
+      modules: [
+        {
+          id: "de-setup",
+          name: "Set up the course on the Mac",
+          dayStart: 181,
+          dayEnd: 182,
+          skill: "Run a data engineering stack on your own machine with Docker",
+          tasks: [
+            {
+              id: "de-start",
+              label: "Data Engineering 101: start here",
+              detail: "Start Data Engineering's free course is Phase 4's main course. You'll skip its SQL and Python chapters (Phases 1 and 3 covered them) and its Kimball chapter (Phase 2 covered star schemas). Phase 4 is all on the Mac.",
+              estimatedMinutes: 30,
+              url: "https://courses.startdataengineering.com/learn/de101/index.html",
+              type: "reading"
+            },
+            {
+              id: "de-docker-setup",
+              label: "Install Docker and start the course's code",
+              detail: "On the Mac: install Docker Desktop, fork and clone the course's code repository, then run docker compose up -d and open Jupyter at localhost:8888. Expect a few hiccups; that's normal the first time.",
+              estimatedMinutes: 60,
+              url: "https://github.com/josephmachado/data_engineering_for_beginners_code",
+              type: "setup",
+              more: [
+                { label: "Docker Desktop for Mac", url: "https://docs.docker.com/desktop/setup/install/mac-install/" }
+              ]
+            },
+            {
+              id: "de-hours-check",
+              label: "Check whether Phase 4's hour estimates still hold",
+              detail: "The Phase 4 hours were estimates made before you started. Compare the time you logged on the start-here and Docker set-up tasks (Progress → Session log) with their estimates. If setup took much longer, ask Claude Code to re-spread Phase 4's days.",
+              estimatedMinutes: 15,
+              url: "",
+              type: "practice"
+            }
+          ]
+        },
+        {
+          id: "de-warehouse",
+          name: "Data warehouses and the multi-hop design",
+          dayStart: 183,
+          dayEnd: 186,
+          skill: "Explain how a data warehouse and the multi-hop layers (raw, cleaned, business-ready) organise data",
+          tasks: [
+            {
+              id: "de-dw",
+              label: "Data Engineering 101: data warehouses",
+              detail: "What a warehouse is for: history, and analysing how the business performs. Do the exercises in the notebooks.",
+              estimatedMinutes: 60,
+              url: "https://courses.startdataengineering.com/learn/de101/dw.html",
+              type: "reading"
+            },
+            {
+              id: "de-multihop",
+              label: "Data Engineering 101: the multi-hop architecture",
+              detail: "Raw data in, then cleaned, then business-ready: the layers most companies use.",
+              estimatedMinutes: 45,
+              url: "https://courses.startdataengineering.com/learn/de101/dw_data_flow.html",
+              type: "reading"
+            },
+            {
+              id: "de-multihop-telecom",
+              label: "Sketch your telecom database as layers",
+              detail: "On paper: which of your telecom tables would be raw, which cleaned, which business-ready? This sketch becomes your dbt project.",
+              estimatedMinutes: 45,
+              url: "",
+              type: "build"
+            }
+          ]
+        },
+        {
+          id: "de-docker",
+          name: "Docker",
+          dayStart: 187,
+          dayEnd: 189,
+          skill: "Package and run code the same way on any machine with Docker",
+          tasks: [
+            {
+              id: "de-docker-1",
+              label: "Data Engineering 101: Docker (part 1)",
+              detail: "Images, containers and why 'it works on my machine' stops being a problem.",
+              estimatedMinutes: 60,
+              url: "https://courses.startdataengineering.com/learn/de101/docker.html",
+              type: "reading"
+            },
+            {
+              id: "de-docker-2",
+              label: "Data Engineering 101: Docker (part 2)",
+              detail: "Docker Compose: several services started together, the way the course's own setup works. Do the exercises.",
+              estimatedMinutes: 60,
+              url: "https://courses.startdataengineering.com/learn/de101/docker.html",
+              type: "practice"
+            }
+          ]
+        },
+        {
+          id: "de-engines",
+          name: "Spark and DuckDB",
+          dayStart: 190,
+          dayEnd: 192,
+          skill: "Process data with Spark and DuckDB from Python",
+          tasks: [
+            {
+              id: "de-engines-1",
+              label: "Data Engineering 101: processing engines (part 1)",
+              detail: "Python telling Spark, DuckDB and Polars what to do. Read it and run the examples.",
+              estimatedMinutes: 60,
+              url: "https://courses.startdataengineering.com/learn/de101/py_transform.html",
+              type: "reading"
+            },
+            {
+              id: "de-engines-2",
+              label: "Data Engineering 101: processing engines (part 2)",
+              detail: "The exercises. Notice how close Spark SQL is to the SQL you already write.",
+              estimatedMinutes: 60,
+              url: "https://courses.startdataengineering.com/learn/de101/py_transform.html",
+              type: "practice"
+            },
+            {
+              id: "de-duckdb-telecom",
+              label: "Query your telecom database with DuckDB",
+              detail: "DuckDB can open a SQLite file directly. Run two of your telecom questions through it and compare the answers.",
+              estimatedMinutes: 30,
+              url: "https://duckdb.org/docs/stable/core_extensions/sqlite",
+              type: "practice"
+            }
+          ]
+        },
+        {
+          id: "de-airflow",
+          name: "Scheduling with Airflow",
+          dayStart: 193,
+          dayEnd: 196,
+          skill: "Schedule and orchestrate a pipeline with Airflow",
+          tasks: [
+            {
+              id: "de-pipelines",
+              label: "Data Engineering 101: schedulers and orchestrators",
+              detail: "When a pipeline runs, and in what order its steps run.",
+              estimatedMinutes: 30,
+              url: "https://courses.startdataengineering.com/learn/de101/data_pipeline.html",
+              type: "reading"
+            },
+            {
+              id: "de-airflow-1",
+              label: "Data Engineering 101: Airflow (part 1)",
+              detail: "DAGs, tasks and the Airflow screen at localhost:8080.",
+              estimatedMinutes: 60,
+              url: "https://courses.startdataengineering.com/learn/de101/airflow.html",
+              type: "reading"
+            },
+            {
+              id: "de-airflow-2",
+              label: "Data Engineering 101: Airflow (part 2)",
+              detail: "Run the course's pipeline and do the exercises.",
+              estimatedMinutes: 60,
+              url: "https://courses.startdataengineering.com/learn/de101/airflow.html",
+              type: "practice"
+            },
+            {
+              id: "de-airflow-own",
+              label: "Write a small DAG of your own",
+              detail: "Two or three steps, e.g. run your mailing list pipeline and then a check on its report. Write it yourself.",
+              estimatedMinutes: 45,
+              url: "",
+              type: "build"
+            }
+          ]
+        },
+        {
+          id: "dbt-telecom",
+          name: "Portfolio project: dbt layer on the telecom database",
+          dayStart: 197,
+          dayEnd: 207,
+          skill: "Build tested, documented dbt models on your own data",
+          tasks: [
+            {
+              id: "dbt-plan",
+              label: "dbt layer on the telecom database: plan it",
+              detail: "Ground rule for every portfolio project: you write the SQL, DAX and Python yourself. Claude only helps with the README layout. Using your layer sketch, list the staging models (one per source table) and two or three mart models that answer your best business questions.",
+              estimatedMinutes: 30,
+              url: "",
+              type: "build"
+            },
+            {
+              id: "de-dbt-1",
+              label: "Data Engineering 101: dbt (part 1)",
+              detail: "Models, sources and how dbt runs them in the right order.",
+              estimatedMinutes: 60,
+              url: "https://courses.startdataengineering.com/learn/de101/dbt.html",
+              type: "reading"
+            },
+            {
+              id: "de-dbt-2",
+              label: "Data Engineering 101: dbt (part 2)",
+              detail: "Tests, docs and the exercises.",
+              estimatedMinutes: 60,
+              url: "https://courses.startdataengineering.com/learn/de101/dbt.html",
+              type: "practice"
+            },
+            {
+              id: "dbt-setup",
+              label: "Set up dbt with DuckDB on the Mac",
+              detail: "Install dbt-core and dbt-duckdb, start a new dbt project, and point it at your telecom SQLite file through DuckDB. Free, and nothing expires.",
+              estimatedMinutes: 45,
+              url: "https://docs.getdbt.com/docs/local/connect-data-platform/duckdb-setup",
+              type: "setup",
+              more: [
+                { label: "DuckDB: reading SQLite files", url: "https://duckdb.org/docs/stable/core_extensions/sqlite" }
+              ]
+            },
+            {
+              id: "dbt-staging",
+              label: "Sources and staging models",
+              detail: "Declare your tables as sources, then one staging model each: renamed columns, cleaned types.",
+              estimatedMinutes: 60,
+              url: "https://docs.getdbt.com/docs/build/sources",
+              type: "build"
+            },
+            {
+              id: "dbt-marts",
+              label: "Mart models",
+              detail: "Two or three business-ready models that answer your best questions, built on the staging models.",
+              estimatedMinutes: 60,
+              url: "",
+              type: "build"
+            },
+            {
+              id: "dbt-tests",
+              label: "Tests and docs",
+              detail: "Tests for keys (unique, not null) and relationships, then dbt docs generate. Take a screenshot of the lineage graph for your README.",
+              estimatedMinutes: 60,
+              url: "https://docs.getdbt.com/docs/build/data-tests",
+              type: "build",
+              more: [
+                { label: "dbt docs commands", url: "https://docs.getdbt.com/reference/commands/cmd-docs" }
+              ]
+            },
+            {
+              id: "dbt-publish",
+              label: "Publish the dbt project on GitHub",
+              detail: "Its own repository, or a dbt folder in the telecom repository, linked from the telecom README.",
+              estimatedMinutes: 30,
+              url: "https://docs.github.com/en/repositories/creating-and-managing-repositories/quickstart-for-repositories",
+              type: "build"
+            },
+            {
+              id: "dbt-readme",
+              label: "Write the README (Phase 4 deliverable)",
+              detail: "In this order: the problem, the data, your approach, key findings with numbers, a screenshot, how to run it, and what you'd do next.",
+              estimatedMinutes: 60,
+              url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
               type: "build"
             }
           ]

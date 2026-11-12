@@ -23,7 +23,8 @@ const mem=memStorage(); let {Store}=boot(mem); await Store.init();
 await t('first open sets startDate to today', ()=>assert.equal(Store.state.startDate, Store.today()));
 await t('first task is SQLBolt 1, day 1', async()=>{ assert.equal(Store.current().task.id,'sqlbolt-1'); assert.equal(Store.currentDay(),1); });
 await t('upcoming(4) gives 4 in order', ()=>assert.deepEqual(Store.upcoming(4).map(x=>x.task.id),['sqlbolt-1','sqlbolt-2','sqlbolt-3','sqlbolt-4']));
-await t('last task day <= 180, days ascend', async()=>{ const ts=Store.tasks(); assert.ok(ts.at(-1).day<=180); for(let i=1;i<ts.length;i++) assert.ok(ts[i].day>=ts[i-1].day); });
+await t('days ascend; Phases 1-3 end on day 180, Phase 4 runs 181-207', async()=>{ const ts=Store.tasks(); for(let i=1;i<ts.length;i++) assert.ok(ts[i].day>=ts[i-1].day);
+  assert.equal(ts.filter(x=>x.phase.id==='python').at(-1).day<=180,true); assert.equal(ts.find(x=>x.phase.id==='de').day,181); assert.equal(ts.at(-1).day<=207,true); assert.equal(Store.totalDays(),180); });
 Store.markDone('sqlbolt-1',35,'  easy start ');
 await t('markDone moves to next + logs session', async()=>{ assert.equal(Store.current().task.id,'sqlbolt-2'); assert.deepEqual(Store.state.sessionLog[0],{date:Store.today(),minutes:35,note:'easy start',taskId:'sqlbolt-1'}); });
 await t('persisted to storage', async()=>{ await Store.flush(); assert.ok(JSON.parse(mem.d['climb.progress']).subjects.data.completedTaskIds.includes('sqlbolt-1')); });
@@ -36,7 +37,7 @@ await t('undo skip', ()=>assert.equal(Store.current().task.id,'sqlbolt-2'));
 Store.markDone('sqlbolt-2',30,''); Store.undoDone('sqlbolt-2');
 await t('undo done removes completion and its session', async()=>{ assert.equal(Store.current().task.id,'sqlbolt-2'); assert.equal(Store.state.sessionLog.length,1); });
 await t('skipping everything left still shows one task', async()=>{ const m=boot(memStorage()).Store; await m.init(); m.tasks().forEach(x=>m.setDone(x.task.id,true)); m.setDone('update-cv',false); m.skipToday('update-cv'); assert.equal(m.current().task.id,'update-cv'); });
-await t('finished state', async()=>{ const m=boot(memStorage()).Store; await m.init(); m.tasks().forEach(x=>m.setDone(x.task.id,true)); assert.equal(m.current(),null); assert.ok(m.isFinished()); assert.equal(m.currentDay(),180); });
+await t('finished state', async()=>{ const m=boot(memStorage()).Store; await m.init(); m.tasks().forEach(x=>m.setDone(x.task.id,true)); assert.equal(m.current(),null); assert.ok(m.isFinished()); assert.equal(m.currentDay(),207); });
 await t('module complete unlocks skill line', async()=>{ const m=boot(memStorage()).Store; await m.init(); const mod=m.tasks()[0].module; mod.tasks.forEach(x=>m.markDone(x.id,10,'')); const s=m.skillsUnlocked(); assert.equal(s.length,1); assert.match(s[0].skill,/SELECT/); assert.equal(s[0].date,m.today()); });
 await t('phase status: current / upcoming', async()=>{ const ps=Store.tasks()[0].phase; assert.equal(Store.phaseStats(ps).status,'current'); assert.equal(Store.phaseStats(Store.tasks().at(-1).phase).status,'upcoming'); });
 await t('weekly streaks: a skipped day never breaks it', async()=>{ const m=boot(memStorage()).Store; await m.init(); const w=m.weekOf(m.today());
@@ -326,11 +327,19 @@ await t('site module: card reminders wait for their project; stretch steps never
   const m=boot(memStorage()).Store; await m.init(); const site=m.side('site'); m.setDone('tel-readme',true);
   site.tasks().filter(x=>!x.task.unlockedBy).forEach(x=>m.setDone(x.task.id,true));
   assert.equal(site.current(),null); assert.equal(site.isFinished(),false);
-  assert.deepEqual(site.waiting().map(w=>w.waitsFor.task.id),['bva-readme','mail-readme']);
+  assert.deepEqual(site.waiting().map(w=>w.waitsFor.task.id),['bva-readme','mail-readme','dbt-readme']);
   assert.ok(!site.tasks().some(x=>x.task.optional));
   m.setDone('bva-readme',true); assert.equal(site.current().task.id,'site-card-pbi');
-  m.setDone('site-card-pbi',true); m.setDone('mail-readme',true); m.setDone('site-card-py',true);
+  m.setDone('site-card-pbi',true); m.setDone('mail-readme',true); m.setDone('site-card-py',true); m.setDone('dbt-readme',true); m.setDone('site-card-dbt',true);
   assert.equal(site.isFinished(),true); assert.equal(m.side('fin').isFinished(),false); });
+
+// ─── Phase 4 ───
+await t('Phase 4: the dbt layer is required, with a README; hour check right after Docker set-up', async()=>{
+  const m=boot(memStorage()).Store; await m.init(); const ids=m.tasks().filter(x=>x.phase.id==='de').map(x=>x.task.id);
+  assert.ok(ids.includes('dbt-readme')); assert.ok(!m.find('dbt-readme').optional);
+  assert.equal(ids[ids.indexOf('de-docker-setup')+1],'de-hours-check');
+  m.tasks().filter(x=>x.phase.id!=='de').forEach(x=>m.setDone(x.task.id,true));
+  assert.equal(m.current().task.id,'de-start'); assert.equal(m.currentDay(),181); });
 
 // ─── The switch to CS50 SQL, with the real backup from 12 Nov ───
 await t('backup from before the switch: 10 tasks kept, next is CS50 set-up on day 11; Spanish untouched', async()=>{

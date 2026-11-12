@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-12 (later): Phase 4, Data Engineering
+
+- A new Phase 4 after day 180, about 20 hours over 27 days, on the Mac. Phases 1–3 still fill the 180 days. Today says "Day N of 180" until then, and "Phase 4 · Day X of 27" in Phase 4.
+- Main course: Start Data Engineering's free *Data Engineering 101* (courses.startdataengineering.com/learn/de101). Kept: set-up, data warehouses, the multi-hop architecture, Docker, processing engines (Spark, DuckDB), schedulers and Airflow, dbt. Skipped: its SQL and Python chapters (Phases 1 and 3) and its Kimball chapter (Phase 2's star schema). The hours are estimates. A short task right after the Docker set-up asks you to check them.
+- Phase 4's portfolio project is required: a **dbt layer on the telecom database** (dbt-core with DuckDB, run locally, nothing expires), with its README task and its own Portfolio card.
+- The Portfolio site module gets a third card reminder, for the dbt layer.
+- The Map's mountain now runs to the end of Phase 4.
+
 ## 2026-11-12: CS50 SQL, portfolio projects, Portfolio site
 
 - **CS50 SQL is Phase 1's main course:** weeks 0–6, each lecture in two halves and each problem set in one or two sittings. SQLBolt, SQLZoo, the SQL Tutorial and PostgreSQL Exercises lessons that weren't done yet are gone; DataLemur's CTE lesson, the window-function lessons and one set of interview questions stay, because CS50 barely covers them.

@@ -10,7 +10,7 @@
       README task, tel-readme). Untick that and it locks again.
     - Then it shows on Today as its own group under Data. Every task is an
       hour or less, so it suits a lighter week.
-    - The two "add this card" reminders for the Power BI and Python projects
+    - The "add this card" reminders for the Power BI, Python and dbt projects
       wait until those projects are finished (each task's `unlockedBy`).
     - The stretch steps (8 and 9) are optional: on the Map, never on Today.
     - Its own Portfolio card, "Portfolio site".
@@ -408,6 +408,15 @@ const SIDE_SITE = {
           url: "",
           type: "build",
           unlockedBy: "mail-readme"
+        },
+        {
+          id: "site-card-dbt",
+          label: "Add the dbt layer card to your site",
+          detail: "Add this project's card to your site, with the lineage graph screenshot and a link to the repository.",
+          estimatedMinutes: 30,
+          url: "",
+          type: "build",
+          unlockedBy: "dbt-readme"
         }
       ]
     },

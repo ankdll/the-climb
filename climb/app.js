@@ -197,13 +197,28 @@
   }
 
   // Where you are, in the subject's own unit: "Day 4 of 180" or "Week 3 of 39".
+  // A phase after the main plan (Data's Phase 4, after day 180) counts its own
+  // days: "Phase 4 · Day 3 of 27".
+  const afterMain = (S, phase) => !!phase && S.unit === "day" && phase.dayStart > S.totalDays();
+  const phaseNumber = (S, phase) => S.plan.phases.indexOf(phase) + 1;
+  const ownDay = (phase, day) => day - phase.dayStart + 1;
+  const phaseLength = (phase) => phase.dayEnd - phase.dayStart + 1;
+  // "Days 12–20", or for a phase after the main plan "Phase 4 · days 3–6".
+  function dayRange(S, phase, start, end) {
+    return afterMain(S, phase)
+      ? `Phase ${phaseNumber(S, phase)} · days ${ownDay(phase, start)}–${ownDay(phase, end)}`
+      : `Days ${start}–${end}`;
+  }
+
   function where(S, entry) {
     if (S.unit === "week") return `Week ${Math.ceil(entry.day / 7)} of ${Math.ceil(S.totalDays() / 7)}`;
+    if (afterMain(S, entry.phase)) return `Phase ${phaseNumber(S, entry.phase)} · Day ${ownDay(entry.phase, entry.day)} of ${phaseLength(entry.phase)}`;
     return `Day ${entry.day} of ${S.totalDays()}`;
   }
 
   function whereShort(S, entry) {
-    return S.unit === "week" ? `Week ${Math.ceil(entry.day / 7)}` : `Day ${entry.day}`;
+    if (S.unit === "week") return `Week ${Math.ceil(entry.day / 7)}`;
+    return afterMain(S, entry.phase) ? `Day ${ownDay(entry.phase, entry.day)}` : `Day ${entry.day}`;
   }
 
   function subjectHours(S) {
@@ -217,7 +232,7 @@
 
   function renderFinished(S) {
     const text = S.id === "data"
-      ? { kind: "All three phases", title: "That's the whole climb.", detail: "Every task is done. Your deliverables are on the Portfolio page, ready for the next application that asks for work samples.", link: `<a class="btn btn-solid" href="#portfolio">Open Portfolio</a>` }
+      ? { kind: `All ${S.plan.phases.length} phases`, title: "That's the whole climb.", detail: "Every task is done. Your deliverables are on the Portfolio page, ready for the next application that asks for work samples.", link: `<a class="btn btn-solid" href="#portfolio">Open Portfolio</a>` }
       : { kind: "Every week planned so far", title: `That's all of ${S.name}, for now.`, detail: "Keep the same rhythm going, and ask Claude Code to write the next stretch.", link: "" };
     return `
       <article class="card summit">
@@ -604,11 +619,11 @@
   // phase climbs more. Climbed so far = solid ink; still ahead = dotted.
   function renderProfile() {
     const W = 600, H = 120, TOP = 16, BOTTOM = 8;
-    const total = S().totalDays();
     const phases = S().plan.phases;
-    // Height reached at the end of each phase. Data's three phases climb unevenly;
+    const total = phases[phases.length - 1].dayEnd;
+    // Height reached at the end of each phase. Data's four phases climb unevenly;
     // other subjects climb in even steps.
-    const heights = phases.length === 3 ? [0.45, 0.78, 1] : phases.map((p, i) => (i + 1) / phases.length);
+    const heights = phases.length === 4 ? [0.4, 0.7, 0.88, 1] : phases.map((p, i) => (i + 1) / phases.length);
     const here = S().current() ? S().currentDay() - 1 : total;
 
     function elevation(day) {
@@ -676,7 +691,7 @@
     const waitsFor = !done && task.unlockedBy && !S().isDone(task.unlockedBy) ? S().find(task.unlockedBy) : null;
     const meta = done
       ? `Done${doneOn ? ` ${shortDate(doneOn)}` : ""}`
-      : `${entry.optional ? "Optional · " : S().unit === "day" && day ? `Day ${day} · ` : ""}${waitsFor ? `Appears after “${esc(waitsFor.task.label)}” · ` : ""}${duration(task.estimatedMinutes)} · ${kind}`;
+      : `${entry.optional ? "Optional · " : S().unit === "day" && day ? `${whereShort(S(), entry)} · ` : ""}${waitsFor ? `Appears after “${esc(waitsFor.task.label)}” · ` : ""}${duration(task.estimatedMinutes)} · ${kind}`;
     const title = task.url
       ? `<a href="${esc(task.url)}" target="_blank" rel="noopener">${esc(task.label)}</a>`
       : `<span>${esc(task.label)}</span>`;
@@ -714,7 +729,7 @@
       <section class="module ${cls}">
         <h3 class="module-h">
           <button class="module-head" type="button" data-module="${esc(module.id)}" aria-expanded="${open}" aria-controls="m-${esc(module.id)}">
-            <span class="m-days">${side ? esc(side.plan.shortName || "") : S().unit === "week" ? esc(phaseOf(module).shortName || "") : `Days ${module.dayStart}–${module.dayEnd}`}</span>
+            <span class="m-days">${side ? esc(side.plan.shortName || "") : S().unit === "week" ? esc(phaseOf(module).shortName || "") : dayRange(S(), phaseOf(module), module.dayStart, module.dayEnd)}</span>
             <span class="m-name">${esc(module.name)}</span>
             <span class="m-state">${status}</span>
           </button>
@@ -764,7 +779,7 @@
           <button class="stop-head" type="button" data-phase="${esc(phase.id)}" aria-expanded="${open}" aria-controls="p-${esc(phase.id)}">
             <span class="p-days">${S().unit === "week"
               ? `Weeks ${Math.ceil(phase.dayStart / 7)}–${Math.ceil(phase.dayEnd / 7)}`
-              : `Days ${phase.dayStart}–${phase.dayEnd}`} · about ${phase.estimatedHours} hours</span>
+              : afterMain(S(), phase) ? `After day ${S().totalDays()} · ${phaseLength(phase)} days` : `Days ${phase.dayStart}–${phase.dayEnd}`} · about ${phase.estimatedHours} hours</span>
             <span class="p-name">${esc(phase.name)}</span>
             <span class="p-state">${state}</span>
           </button>
@@ -1373,7 +1388,7 @@
 
       return `
         <article class="pf-card ${state}${isHere ? " is-here" : ""}">
-          <p class="pf-tab">Phase ${i + 1} · Days ${phase.dayStart}–${phase.dayEnd}</p>
+          <p class="pf-tab">Phase ${i + 1} · ${afterMain(D(), phase) ? `After day ${D().totalDays()} · ${phaseLength(phase)} days` : `Days ${phase.dayStart}–${phase.dayEnd}`}</p>
           <h2 class="pf-title">${esc(phase.deliverableName || phase.name)}</h2>
           ${status}
           <p class="pf-desc">${esc(phase.deliverable)}</p>
@@ -1549,7 +1564,8 @@
           <li><strong>Streaks count weeks.</strong> Study once in a week and the week counts. Skipping a day never breaks a streak.</li>
           ${sides.length ? `<li><strong>Side modules</strong> are extras beside the Data plan: ${sides.map((side) => esc(side.name)).join(" and ")}. They don't change Data's day count or the 180 days, but their time counts toward Data's hours. Each shows on Today under Data until it's finished, then lives at the bottom of Data's Map.</li>` : ""}
           ${D().side("site") ? `<li><strong>Portfolio site</strong> unlocks when you finish the Telecom complaints database. Every task is an hour or less, so it fits a lighter week. Each “add this card to your site” task appears once its project is finished. Steps 8 and 9 are optional stretch steps: tick them on the Map, they never appear on Today.</li>` : ""}
-          <li><strong>Portfolio projects:</strong> one at the end of each phase (SQL, Power BI, Python), each ending with its README. You write the SQL, DAX and Python yourself; Claude only helps with the README layout.</li>
+          <li><strong>After day 180</strong> comes Phase 4, Data Engineering, on the Mac. It counts its own days, so Today shows “Phase 4 · Day 3 of 27” instead of “Day 183 of 180”. Right after the Docker set-up there's a short task to check whether Phase 4's hour estimates still hold.</li>
+          <li><strong>Portfolio projects:</strong> one at the end of each phase (SQL, Power BI, Python, and the dbt layer in Phase 4), each ending with its README. You write the SQL, DAX and Python yourself; Claude only helps with the README layout.</li>
           <li><strong>Optional tasks</strong> (like the CS50 video, for the certificate) are on the Map with “Optional”, never on Today, and a module is finished without them.</li>
           <li><strong>German</strong> unlocks when you tick the Spanish Term 2 exam (on Today or the Map). Untick the exam and it locks again, keeping its progress.</li>
           <li><strong>Back up monthly:</strong> Progress → Your data → Export progress. One file holds every subject.</li>

@@ -561,7 +561,7 @@ const Store = (function () {
     // "Day N of 180" — the day of the task you're on, not days since you started.
     function currentDay() {
       const c = current();
-      return c ? c.day : totalDays();
+      return c ? c.day : plan.phases[plan.phases.length - 1].dayEnd;
     }
 
     function isFinished() {
