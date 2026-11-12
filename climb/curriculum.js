@@ -6,7 +6,7 @@
   in the browser, so editing this file never wipes what you've done.
 
   Shape:
-    phases  → the four big stages
+    phases  → the big stages (three, filling the 180 days)
       modules → a block of days inside a phase (each one unlocks a "skill" line)
         tasks   → one sitting's worth of work. The Today screen shows these in order.
 
@@ -22,8 +22,14 @@
     estimatedMinutes  rough time; pre-fills the "how long did it take?" box
     url               the link the "Open" button goes to ("" for no link)
     type              interactive | video | reading | practice | build | setup
+    optional          (optional) true = shown and tickable on the Map, but never on
+                      Today, and not needed for its module or phase to be finished
+    more              (optional) extra links shown under the task on Today
 
   Tasks run top to bottom. To reorder, move a whole { ... } block up or down.
+  Day numbers: each module gets days in proportion to its hours, so after adding
+  or removing tasks, ask Claude Code to re-spread them (the checks in
+  tests/check-curriculum.js catch gaps and overlaps).
 */
 
 const CURRICULUM = {
@@ -36,16 +42,16 @@ const CURRICULUM = {
       name: "SQL Foundations",
       shortName: "SQL",
       dayStart: 1,
-      dayEnd: 42,
-      estimatedHours: 30,
+      dayEnd: 79,
+      estimatedHours: 55,
       why: "SQL is the most-requested skill in every analytics job post and pays back fastest per hour spent.",
-      deliverable: "Your own SQL cheat sheet: the 20 query patterns you'll actually reuse, each with a worked example, saved as a markdown file.",
-      deliverableName: "SQL pattern library",
-      linkHint: "https://github.com/your-name/sql-patterns",
+      deliverable: "A SQLite database of FCC consumer complaints: your own schema, the data loaded and cleaned, and 10–15 business questions answered with CTEs and window functions. It's also your CS50 SQL final project.",
+      deliverableName: "Telecom complaints database",
+      linkHint: "https://github.com/your-name/telecom-complaints",
       modules: [
         {
           id: "sql-basics",
-          name: "SELECT, WHERE, ORDER BY, LIMIT",
+          name: "Done before the switch: SELECT, WHERE, ORDER BY",
           dayStart: 1,
           dayEnd: 10,
           skill: "Write SELECT queries that filter, sort and limit results",
@@ -133,259 +139,270 @@ const CURRICULUM = {
           ]
         },
         {
-          id: "sql-joins",
-          name: "JOINs — INNER, LEFT, multi-table",
+          id: "cs50-querying",
+          name: "CS50 SQL weeks 0–1: Querying and relating",
           dayStart: 11,
-          dayEnd: 18,
-          skill: "Write multi-table JOINs (INNER and LEFT) to combine related data",
+          dayEnd: 23,
+          skill: "Query and relate tables in SQLite: subqueries, JOINs, grouping and many-to-many tables",
           tasks: [
             {
-              id: "sqlbolt-6",
-              label: "SQLBolt lesson 6: Multi-table queries with JOINs",
-              detail: "INNER JOIN — like a VLOOKUP that only keeps rows where a match exists on both sides.",
-              estimatedMinutes: 40,
-              url: "https://sqlbolt.com/lesson/select_queries_with_joins",
-              type: "interactive"
-            },
-            {
-              id: "sqlbolt-7",
-              label: "SQLBolt lesson 7: OUTER JOINs",
-              detail: "LEFT JOIN keeps every row from the first table even when there's no match — the VLOOKUP that returns #N/A instead of dropping the row.",
-              estimatedMinutes: 40,
-              url: "https://sqlbolt.com/lesson/select_queries_with_outer_joins",
-              type: "interactive"
-            },
-            {
-              id: "sqlbolt-8",
-              label: "SQLBolt lesson 8: A short note on NULLs",
-              detail: "What 'empty' means in SQL, and why it trips up filters after a LEFT JOIN.",
-              estimatedMinutes: 25,
-              url: "https://sqlbolt.com/lesson/select_queries_with_nulls",
-              type: "interactive"
-            },
-            {
-              id: "sqlzoo-join",
-              label: "SQLZoo: The JOIN operation",
-              detail: "Football match data across two tables. The core JOIN tutorial from the plan.",
-              estimatedMinutes: 60,
-              url: "https://sqlzoo.net/wiki/The_JOIN_operation",
-              type: "practice"
-            },
-            {
-              id: "sqlzoo-more-join",
-              label: "SQLZoo: More JOIN operations",
-              detail: "Three tables at once (movies, actors, casting). This is where joins start to feel like real work.",
-              estimatedMinutes: 60,
-              url: "https://sqlzoo.net/wiki/More_JOIN_operations",
-              type: "practice"
-            },
-            {
-              id: "sqlzoo-null",
-              label: "SQLZoo: Using NULL",
-              detail: "LEFT and RIGHT joins in practice, plus COALESCE — SQL's IFERROR/IFBLANK.",
-              estimatedMinutes: 45,
-              url: "https://sqlzoo.net/wiki/Using_Null",
-              type: "practice"
-            },
-            {
-              id: "pgex-joins",
-              label: "PostgreSQL Exercises: Joins and subqueries",
-              detail: "Back to the country club. Do the join questions; leave any that use subqueries for later if they lose you.",
-              estimatedMinutes: 60,
-              url: "https://pgexercises.com/questions/joins/",
-              type: "practice"
-            },
-            {
-              id: "cheatsheet-joins",
-              label: "Add JOIN patterns to your cheat sheet",
-              detail: "Add 3 patterns: inner join, left join, and 'find rows with no match' (LEFT JOIN … WHERE key IS NULL). That last one is a reconciliation classic.",
+              id: "cs50-setup",
+              label: "Set up CS50 SQL",
+              detail: "Sign in to cs50.dev with your GitHub account. It's a free VS Code in the browser with SQLite ready, so there's nothing to install. An edX account only matters later, if you want the free certificate.",
               estimatedMinutes: 30,
-              url: "",
-              type: "build"
+              url: "https://cs50.dev/",
+              type: "setup",
+              more: [
+                { label: "CS50 SQL course home", url: "https://cs50.harvard.edu/sql/" }
+              ]
+            },
+            {
+              id: "cs50-w0-lecture-1",
+              label: "CS50 SQL week 0: Querying (lecture, first half)",
+              detail: "Watch the first half of the lecture. Pause and type the queries yourself in your cs50.dev window as you go.",
+              estimatedMinutes: 55,
+              url: "https://cs50.harvard.edu/sql/weeks/0/",
+              type: "video"
+            },
+            {
+              id: "cs50-w0-lecture-2",
+              label: "CS50 SQL week 0: Querying (lecture, second half)",
+              detail: "Finish the lecture. Read the notes on the same page afterwards: they're the quickest way to look something up later.",
+              estimatedMinutes: 55,
+              url: "https://cs50.harvard.edu/sql/weeks/0/",
+              type: "video"
+            },
+            {
+              id: "cs50-pset-0a",
+              label: "CS50 SQL problem set 0: Cyberchase and Normals",
+              detail: "Week 0 repeats what you did on SQLBolt and SQLZoo, so this should move quickly. Use it to get used to SQLite and to submitting with check50 and submit50.",
+              estimatedMinutes: 75,
+              url: "https://cs50.harvard.edu/sql/psets/0/",
+              type: "practice"
+            },
+            {
+              id: "cs50-pset-0b",
+              label: "CS50 SQL problem set 0: Players and Views",
+              detail: "Finish problem set 0. Write each answer yourself before checking it.",
+              estimatedMinutes: 75,
+              url: "https://cs50.harvard.edu/sql/psets/0/",
+              type: "practice"
+            },
+            {
+              id: "cs50-w1-lecture-1",
+              label: "CS50 SQL week 1: Relating (lecture, first half)",
+              detail: "Watch the first half of the lecture. Pause and type the queries yourself in your cs50.dev window as you go.",
+              estimatedMinutes: 55,
+              url: "https://cs50.harvard.edu/sql/weeks/1/",
+              type: "video"
+            },
+            {
+              id: "cs50-w1-lecture-2",
+              label: "CS50 SQL week 1: Relating (lecture, second half)",
+              detail: "Finish the lecture. Read the notes on the same page afterwards: they're the quickest way to look something up later.",
+              estimatedMinutes: 55,
+              url: "https://cs50.harvard.edu/sql/weeks/1/",
+              type: "video"
+            },
+            {
+              id: "cs50-pset-1a",
+              label: "CS50 SQL problem set 1: DESE and Packages",
+              detail: "JOINs and subqueries across several tables. Draw the tables on paper first if the links between them aren't obvious.",
+              estimatedMinutes: 75,
+              url: "https://cs50.harvard.edu/sql/psets/1/",
+              type: "practice"
+            },
+            {
+              id: "cs50-pset-1b",
+              label: "CS50 SQL problem set 1: Moneyball",
+              detail: "The longest one in week 1. Moneyball's last questions are hard; leave them and come back after a break if you're stuck.",
+              estimatedMinutes: 75,
+              url: "https://cs50.harvard.edu/sql/psets/1/",
+              type: "practice"
             }
           ]
         },
         {
-          id: "sql-aggregates",
-          name: "GROUP BY, aggregates and HAVING",
-          dayStart: 19,
-          dayEnd: 26,
-          skill: "Summarise data with GROUP BY, aggregate functions and HAVING",
-          tasks: [
-            {
-              id: "sqlbolt-9",
-              label: "SQLBolt lesson 9: Queries with expressions",
-              detail: "Calculated columns and aliases — the SQL version of adding a formula column.",
-              estimatedMinutes: 30,
-              url: "https://sqlbolt.com/lesson/select_queries_with_expressions",
-              type: "interactive"
-            },
-            {
-              id: "sqlbolt-10-11",
-              label: "SQLBolt lessons 10–11: Queries with aggregates",
-              detail: "COUNT, SUM, AVG and GROUP BY — a pivot table written as a sentence. Lesson 11 adds HAVING.",
-              estimatedMinutes: 45,
-              url: "https://sqlbolt.com/lesson/select_queries_with_aggregates",
-              type: "interactive"
-            },
-            {
-              id: "ts-aggregates",
-              label: "SQL Tutorial (Intermediate): Aggregate functions",
-              detail: "The intermediate section of the Mode/ThoughtSpot tutorial. Read the aggregates overview, then COUNT, SUM, MIN/MAX and AVG from the sidebar.",
-              estimatedMinutes: 50,
-              url: "https://www.thoughtspot.com/sql-tutorial/sql-aggregate-functions",
-              type: "reading"
-            },
-            {
-              id: "ts-group-by",
-              label: "SQL Tutorial (Intermediate): GROUP BY",
-              detail: "Grouping by one and several columns, on real Apple stock price data.",
-              estimatedMinutes: 40,
-              url: "https://www.thoughtspot.com/sql-tutorial/sql-group-by",
-              type: "reading"
-            },
-            {
-              id: "ts-having",
-              label: "SQL Tutorial (Intermediate): HAVING",
-              detail: "Filtering after grouping — 'only show months where total sales > X'. WHERE filters rows, HAVING filters groups.",
-              estimatedMinutes: 30,
-              url: "https://www.thoughtspot.com/sql-tutorial/sql-having",
-              type: "reading"
-            },
-            {
-              id: "ts-case",
-              label: "SQL Tutorial (Intermediate): CASE",
-              detail: "SQL's IF/IFS. Pay attention to the part about CASE inside aggregates — it's how you build a pivot-style summary.",
-              estimatedMinutes: 40,
-              url: "https://www.thoughtspot.com/sql-tutorial/sql-case",
-              type: "reading"
-            },
-            {
-              id: "ts-distinct",
-              label: "SQL Tutorial (Intermediate): DISTINCT",
-              detail: "Counting unique values — COUNT(DISTINCT …) is one you'll use constantly.",
-              estimatedMinutes: 25,
-              url: "https://www.thoughtspot.com/sql-tutorial/sql-distinct",
-              type: "reading"
-            },
-            {
-              id: "sqlzoo-sum-count",
-              label: "SQLZoo: SUM and COUNT",
-              detail: "Practice set for everything in this module.",
-              estimatedMinutes: 45,
-              url: "https://sqlzoo.net/wiki/SUM_and_COUNT",
-              type: "practice"
-            },
-            {
-              id: "pgex-aggregates",
-              label: "PostgreSQL Exercises: Aggregation",
-              detail: "Do the first 10 or so. Later ones use window functions — you'll come back to those on day 35.",
-              estimatedMinutes: 45,
-              url: "https://pgexercises.com/questions/aggregates/",
-              type: "practice"
-            },
-            {
-              id: "cheatsheet-aggregates",
-              label: "Add grouping patterns to your cheat sheet",
-              detail: "Add 4 patterns: group and count, group and sum, HAVING filter, and CASE inside SUM for a pivot-style summary.",
-              estimatedMinutes: 30,
-              url: "",
-              type: "build"
-            }
-          ]
-        },
-        {
-          id: "sql-ctes",
-          name: "Subqueries and CTEs",
-          dayStart: 27,
+          id: "cs50-designing",
+          name: "CS50 SQL weeks 2–3: Designing and writing",
+          dayStart: 24,
           dayEnd: 34,
-          skill: "Break complex questions into readable steps with subqueries and CTEs",
+          skill: "Design a database schema (tables, keys, constraints) and change data with INSERT, UPDATE and DELETE",
           tasks: [
             {
-              id: "sqlbolt-12",
-              label: "SQLBolt lesson 12: Order of execution",
-              detail: "The order SQL actually runs a query in. Short, but it explains most 'why doesn't this work?' moments.",
-              estimatedMinutes: 25,
-              url: "https://sqlbolt.com/lesson/select_queries_order_of_execution",
-              type: "interactive"
+              id: "cs50-w2-lecture-1",
+              label: "CS50 SQL week 2: Designing (lecture, first half)",
+              detail: "Watch the first half of the lecture. Pause and type the queries yourself in your cs50.dev window as you go.",
+              estimatedMinutes: 55,
+              url: "https://cs50.harvard.edu/sql/weeks/2/",
+              type: "video"
             },
             {
-              id: "ts-subquery",
-              label: "SQL Tutorial (Advanced): Writing subqueries",
-              detail: "A query inside a query. Like using a helper column, then referring to it.",
-              estimatedMinutes: 50,
-              url: "https://www.thoughtspot.com/sql-tutorial/sql-subquery",
-              type: "reading"
+              id: "cs50-w2-lecture-2",
+              label: "CS50 SQL week 2: Designing (lecture, second half)",
+              detail: "Finish the lecture. Read the notes on the same page afterwards: they're the quickest way to look something up later.",
+              estimatedMinutes: 55,
+              url: "https://cs50.harvard.edu/sql/weeks/2/",
+              type: "video"
             },
             {
-              id: "sqlzoo-select-within",
-              label: "SQLZoo: SELECT within SELECT",
-              detail: "Subquery practice. Questions 5 onward are tough — it's fine to take two sittings.",
-              estimatedMinutes: 60,
-              url: "https://sqlzoo.net/wiki/SELECT_within_SELECT_Tutorial",
+              id: "cs50-pset-2a",
+              label: "CS50 SQL problem set 2: ATL and Donuts",
+              detail: "Your first schemas: you decide the tables, the columns and the keys. This is the skill your telecom project needs most.",
+              estimatedMinutes: 75,
+              url: "https://cs50.harvard.edu/sql/psets/2/",
               type: "practice"
             },
             {
-              id: "ts-union",
-              label: "SQL Tutorial (Intermediate): UNION",
-              detail: "Stacking two result sets on top of each other — appending sheets.",
-              estimatedMinutes: 30,
-              url: "https://www.thoughtspot.com/sql-tutorial/sql-union",
-              type: "reading"
+              id: "cs50-pset-2b",
+              label: "CS50 SQL problem set 2: Connect",
+              detail: "Design a small professional-network database. Write down why you chose each table; it's practice for your project's design document.",
+              estimatedMinutes: 60,
+              url: "https://cs50.harvard.edu/sql/psets/2/",
+              type: "practice"
             },
+            {
+              id: "cs50-w3-lecture-1",
+              label: "CS50 SQL week 3: Writing (lecture, first half)",
+              detail: "Watch the first half of the lecture. Pause and type the queries yourself in your cs50.dev window as you go.",
+              estimatedMinutes: 45,
+              url: "https://cs50.harvard.edu/sql/weeks/3/",
+              type: "video"
+            },
+            {
+              id: "cs50-w3-lecture-2",
+              label: "CS50 SQL week 3: Writing (lecture, second half)",
+              detail: "Finish the lecture. Read the notes on the same page afterwards: they're the quickest way to look something up later.",
+              estimatedMinutes: 45,
+              url: "https://cs50.harvard.edu/sql/weeks/3/",
+              type: "video"
+            },
+            {
+              id: "cs50-pset-3a",
+              label: "CS50 SQL problem set 3: Don't Panic!",
+              detail: "INSERT, UPDATE and DELETE on a database you're 'breaking into'. Short and fun.",
+              estimatedMinutes: 45,
+              url: "https://cs50.harvard.edu/sql/psets/3/",
+              type: "practice"
+            },
+            {
+              id: "cs50-pset-3b",
+              label: "CS50 SQL problem set 3: Meteorites",
+              detail: "Clean a messy CSV with SQL and load it into a table: the same job you'll do with the FCC data.",
+              estimatedMinutes: 75,
+              url: "https://cs50.harvard.edu/sql/psets/3/",
+              type: "practice"
+            }
+          ]
+        },
+        {
+          id: "cs50-scaling",
+          name: "CS50 SQL weeks 4–6: Viewing, optimizing and scaling",
+          dayStart: 35,
+          dayEnd: 49,
+          skill: "Build views and indexes, make slow queries fast, and explain how MySQL and PostgreSQL differ from SQLite",
+          tasks: [
+            {
+              id: "cs50-w4-lecture-1",
+              label: "CS50 SQL week 4: Viewing (lecture, first half)",
+              detail: "Watch the first half of the lecture. Pause and type the queries yourself in your cs50.dev window as you go.",
+              estimatedMinutes: 55,
+              url: "https://cs50.harvard.edu/sql/weeks/4/",
+              type: "video"
+            },
+            {
+              id: "cs50-w4-lecture-2",
+              label: "CS50 SQL week 4: Viewing (lecture, second half)",
+              detail: "Finish the lecture. Read the notes on the same page afterwards: they're the quickest way to look something up later.",
+              estimatedMinutes: 55,
+              url: "https://cs50.harvard.edu/sql/weeks/4/",
+              type: "video"
+            },
+            {
+              id: "cs50-pset-4a",
+              label: "CS50 SQL problem set 4: Census and BnB",
+              detail: "Views: saved queries that behave like tables. Very close to how analysts give others a clean slice of data.",
+              estimatedMinutes: 75,
+              url: "https://cs50.harvard.edu/sql/psets/4/",
+              type: "practice"
+            },
+            {
+              id: "cs50-pset-4b",
+              label: "CS50 SQL problem set 4: Private",
+              detail: "A short puzzle built from a view.",
+              estimatedMinutes: 45,
+              url: "https://cs50.harvard.edu/sql/psets/4/",
+              type: "practice"
+            },
+            {
+              id: "cs50-w5-lecture-1",
+              label: "CS50 SQL week 5: Optimizing (lecture, first half)",
+              detail: "Watch the first half of the lecture. Pause and type the queries yourself in your cs50.dev window as you go.",
+              estimatedMinutes: 55,
+              url: "https://cs50.harvard.edu/sql/weeks/5/",
+              type: "video"
+            },
+            {
+              id: "cs50-w5-lecture-2",
+              label: "CS50 SQL week 5: Optimizing (lecture, second half)",
+              detail: "Finish the lecture. Read the notes on the same page afterwards: they're the quickest way to look something up later.",
+              estimatedMinutes: 55,
+              url: "https://cs50.harvard.edu/sql/weeks/5/",
+              type: "video"
+            },
+            {
+              id: "cs50-pset-5",
+              label: "CS50 SQL problem set 5: Snap",
+              detail: "Indexes and query plans: make queries fast without changing their answers.",
+              estimatedMinutes: 75,
+              url: "https://cs50.harvard.edu/sql/psets/5/",
+              type: "practice"
+            },
+            {
+              id: "cs50-w6-lecture-1",
+              label: "CS50 SQL week 6: Scaling (lecture, first half)",
+              detail: "Watch the first half of the lecture. Pause and type the queries yourself in your cs50.dev window as you go.",
+              estimatedMinutes: 55,
+              url: "https://cs50.harvard.edu/sql/weeks/6/",
+              type: "video"
+            },
+            {
+              id: "cs50-w6-lecture-2",
+              label: "CS50 SQL week 6: Scaling (lecture, second half)",
+              detail: "Finish the lecture. Read the notes on the same page afterwards: they're the quickest way to look something up later.",
+              estimatedMinutes: 55,
+              url: "https://cs50.harvard.edu/sql/weeks/6/",
+              type: "video"
+            },
+            {
+              id: "cs50-pset-6",
+              label: "CS50 SQL problem set 6: Deep and Connect",
+              detail: "A short written answer about splitting data across servers, then your week-2 Connect schema rebuilt in MySQL. That's the last problem set.",
+              estimatedMinutes: 90,
+              url: "https://cs50.harvard.edu/sql/psets/6/",
+              type: "practice"
+            }
+          ]
+        },
+        {
+          id: "sql-windows",
+          name: "CTEs and window functions",
+          dayStart: 50,
+          dayEnd: 55,
+          skill: "Write CTEs and window functions (ROW_NUMBER, RANK, LAG, running totals)",
+          tasks: [
             {
               id: "dl-cte",
               label: "DataLemur: CTE vs. subquery",
-              detail: "CTEs (WITH …) let you name each step of a query. This is the style analytics engineers write in every day.",
+              detail: "CTEs (WITH …) let you name each step of a query. CS50 only touches on them, and your telecom project uses them in most answers.",
               estimatedMinutes: 40,
               url: "https://datalemur.com/sql-tutorial/sql-cte-subquery",
               type: "reading"
             },
             {
-              id: "pg-docs-with",
-              label: "PostgreSQL docs: WITH queries (first section only)",
-              detail: "Skim section 7.8.1 for a second explanation of CTEs. Stop before 'recursive' — not needed yet.",
-              estimatedMinutes: 25,
-              url: "https://www.postgresql.org/docs/current/queries-with.html",
-              type: "reading"
-            },
-            {
-              id: "ts-pivot",
-              label: "SQL Tutorial (Advanced): Pivoting data",
-              detail: "Rows to columns and back — the SQL version of something you've done in Excel a thousand times.",
-              estimatedMinutes: 40,
-              url: "https://www.thoughtspot.com/sql-tutorial/sql-pivot-table",
-              type: "reading"
-            },
-            {
-              id: "pgex-date",
-              label: "PostgreSQL Exercises: Working with timestamps",
-              detail: "Dates in SQL. Try rewriting one answer as a CTE once you've solved it.",
-              estimatedMinutes: 45,
-              url: "https://pgexercises.com/questions/date/",
-              type: "practice"
-            },
-            {
-              id: "cheatsheet-ctes",
-              label: "Add subquery and CTE patterns to your cheat sheet",
-              detail: "Add 4 patterns: filter by a subquery, a multi-step CTE, UNION, and a pivot with CASE. Rewrite one of your earlier patterns as a CTE.",
-              estimatedMinutes: 30,
-              url: "",
-              type: "build"
-            }
-          ]
-        },
-        {
-          id: "sql-practice",
-          name: "Practice and window functions",
-          dayStart: 35,
-          dayEnd: 42,
-          skill: "Rank and compare rows over time with window functions (ROW_NUMBER, RANK, LAG)",
-          tasks: [
-            {
               id: "ts-window",
               label: "SQL Tutorial (Advanced): Window functions",
-              detail: "Running totals and rankings without collapsing rows — the bit GROUP BY can't do.",
+              detail: "Running totals and rankings without collapsing rows: the bit GROUP BY can't do. SQLite supports all of these.",
               estimatedMinutes: 50,
               url: "https://www.thoughtspot.com/sql-tutorial/sql-window-functions",
               type: "reading"
@@ -393,7 +410,7 @@ const CURRICULUM = {
             {
               id: "dl-window-aggregates",
               label: "DataLemur: Aggregate window functions",
-              detail: "SUM() OVER and friends — running totals and share-of-total.",
+              detail: "SUM() OVER and friends: running totals and share-of-total.",
               estimatedMinutes: 40,
               url: "https://datalemur.com/sql-tutorial/sql-aggregate-window-functions",
               type: "reading"
@@ -401,7 +418,7 @@ const CURRICULUM = {
             {
               id: "dl-window-ranking",
               label: "DataLemur: Ranking with window functions",
-              detail: "ROW_NUMBER, RANK and DENSE_RANK — and the classic 'top 3 per category' question.",
+              detail: "ROW_NUMBER, RANK and DENSE_RANK, and the classic 'top 3 per category' question.",
               estimatedMinutes: 40,
               url: "https://datalemur.com/sql-tutorial/sql-rank-dense_rank-row_number-window-function",
               type: "reading"
@@ -409,37 +426,213 @@ const CURRICULUM = {
             {
               id: "dl-window-lag",
               label: "DataLemur: LEAD and LAG",
-              detail: "Comparing a row with the one before it — month-on-month change.",
+              detail: "Comparing a row with the one before it: month-on-month change.",
               estimatedMinutes: 40,
               url: "https://datalemur.com/sql-tutorial/sql-time-series-window-function-lead-lag",
               type: "reading"
             },
             {
               id: "dl-questions-1",
-              label: "DataLemur: 3 easy interview questions",
-              detail: "Filter the question list to Easy and pick any three. These are real interview questions from real companies.",
+              label: "DataLemur: 3 interview questions",
+              detail: "Filter the list to Easy and pick three, at least one using a window function. These are real interview questions from real companies.",
               estimatedMinutes: 45,
               url: "https://datalemur.com/questions?category=SQL",
               type: "practice"
-            },
-            {
-              id: "dl-questions-2",
-              label: "DataLemur: 3 more, one of them Medium",
-              detail: "Two Easy and one Medium. If the Medium beats you, read the solution and write down the pattern it used.",
-              estimatedMinutes: 45,
-              url: "https://datalemur.com/questions?category=SQL",
-              type: "practice"
-            },
-            {
-              id: "cheatsheet-finish",
-              label: "Finish your SQL cheat sheet (Phase 1 deliverable)",
-              detail: "Add window function patterns (running total, top N per group, change vs previous row) to reach 20. Read it top to bottom and fix anything you wouldn't understand in six months.",
-              estimatedMinutes: 90,
-              url: "",
-              type: "build"
             }
           ]
-        }
+        },
+        {
+          id: "git",
+          name: "Git and GitHub",
+          dayStart: 56,
+          dayEnd: 64,
+          skill: "Version-control work with Git and share it on GitHub",
+          tasks: [
+            {
+              id: "git-what",
+              label: "Read: What is Git?",
+              detail: "The short official explanation. Git is a save history for a folder: every version kept, any one recoverable. You need it now, because each portfolio project lives on GitHub.",
+              estimatedMinutes: 20,
+              url: "https://git-scm.com/book/en/v2/Getting-Started-What-is-Git%3F",
+              type: "reading"
+            },
+            {
+              id: "lgb-intro",
+              label: "Learn Git Branching: Introduction sequence",
+              detail: "A visual game. Do the four Introduction levels: commits, branches, merging, rebasing.",
+              estimatedMinutes: 45,
+              url: "https://learngitbranching.js.org/?locale=en_US",
+              type: "interactive"
+            },
+            {
+              id: "lgb-ramp",
+              label: "Learn Git Branching: Ramping up",
+              detail: "Moving around history and undoing things. The undo levels are the ones you'll actually need.",
+              estimatedMinutes: 45,
+              url: "https://learngitbranching.js.org/?locale=en_US",
+              type: "interactive"
+            },
+            {
+              id: "lgb-remote",
+              label: "Learn Git Branching: Remote (first levels)",
+              detail: "Switch to the Remote tab. Push, pull and fetch: how your machine talks to GitHub.",
+              estimatedMinutes: 45,
+              url: "https://learngitbranching.js.org/?locale=en_US",
+              type: "interactive"
+            },
+            {
+              id: "git-install",
+              label: "Install Git on your machine",
+              detail: "On Windows, Git for Windows from the official site. On the Mac, type git in Terminal and it offers to install itself. You already have a GitHub account; check its name and photo are ones you'd put on a CV.",
+              estimatedMinutes: 30,
+              url: "https://git-scm.com/downloads",
+              type: "setup"
+            },
+            {
+              id: "gh-skills-intro",
+              label: "GitHub Skills: Introduction to GitHub",
+              detail: "A guided course that runs inside a real repository on your account. Follow the instructions in the README.",
+              estimatedMinutes: 60,
+              url: "https://github.com/skills/introduction-to-github",
+              type: "interactive"
+            },
+            {
+              id: "gh-skills-markdown",
+              label: "GitHub Skills: Communicate using Markdown",
+              detail: "How READMEs are written. Every portfolio project ends with one.",
+              estimatedMinutes: 45,
+              url: "https://github.com/skills/communicate-using-markdown",
+              type: "interactive"
+            },
+            {
+              id: "gh-skills-pr",
+              label: "GitHub Skills: Review pull requests",
+              detail: "How teams propose and check changes. Most analytics engineering teams work this way.",
+              estimatedMinutes: 45,
+              url: "https://github.com/skills/review-pull-requests",
+              type: "interactive"
+            }
+          ]
+        },
+        {
+          id: "telecom",
+          name: "Portfolio project: Telecom complaints database",
+          dayStart: 65,
+          dayEnd: 79,
+          skill: "Design, load and analyse a real database end to end in SQL, documented for others",
+          tasks: [
+            {
+              id: "tel-plan",
+              label: "Telecom complaints database: read the rules and plan",
+              detail: "Ground rule for every portfolio project: you write the SQL, DAX and Python yourself. Claude only helps with the README layout. This is also your CS50 SQL final project, so read CS50's project page first: SQLite, and three files (DESIGN.md, schema.sql, queries.sql).",
+              estimatedMinutes: 45,
+              url: "https://cs50.harvard.edu/sql/project/",
+              type: "reading"
+            },
+            {
+              id: "tel-data",
+              label: "Download the FCC complaints data and take a slice",
+              detail: "The FCC's Consumer Complaints data holds every informal complaint since October 2014, so it's big. Export one or two years (the portal can filter before you download). List the columns and everything messy you notice. The FCC doesn't verify complaints; your README should say so.",
+              estimatedMinutes: 60,
+              url: "https://opendata.fcc.gov/d/3xyp-aqkj",
+              type: "setup",
+              more: [
+                { label: "Direct CSV download (everything, large)", url: "https://opendata.fcc.gov/api/views/3xyp-aqkj/rows.csv?accessType=DOWNLOAD" }
+              ]
+            },
+            {
+              id: "tel-questions",
+              label: "Write your 10–15 business questions",
+              detail: "Questions a telecom manager would ask, e.g. which issues grew fastest year on year, or the top 3 issues in each state. Aim for at least half that need a CTE or a window function.",
+              estimatedMinutes: 30,
+              url: "",
+              type: "build"
+            },
+            {
+              id: "tel-schema",
+              label: "Design the schema and draw the diagram",
+              detail: "Split the flat file into tables (complaints, issues, locations, methods…) with keys and constraints. Draw the entity relationship diagram; CS50 wants it as an image in DESIGN.md. Start schema.sql with comments.",
+              estimatedMinutes: 75,
+              url: "https://dbdiagram.io/",
+              type: "build"
+            },
+            {
+              id: "tel-load",
+              label: "Load the data into SQLite",
+              detail: "Import the CSV into a staging table with .import, then INSERT … SELECT into your tables, cleaning as you go. Check row counts at every step.",
+              estimatedMinutes: 75,
+              url: "https://sqlite.org/cli.html",
+              type: "build"
+            },
+            {
+              id: "tel-optimize",
+              label: "Add views and indexes",
+              detail: "A view or two that people would query often, and indexes for your slowest questions. Time a query before and after. CS50 asks for these under 'optimizations'.",
+              estimatedMinutes: 45,
+              url: "https://www.sqlite.org/lang_createindex.html",
+              type: "build"
+            },
+            {
+              id: "tel-queries-1",
+              label: "Answer your questions in SQL (part 1)",
+              detail: "The first half of your questions, in queries.sql, each with a comment saying what it answers. Write every query yourself.",
+              estimatedMinutes: 75,
+              url: "https://www.sqlite.org/windowfunctions.html",
+              type: "build"
+            },
+            {
+              id: "tel-queries-2",
+              label: "Answer your questions in SQL (part 2)",
+              detail: "The rest. Note the 3 or 4 most interesting numbers: they become your README's key findings.",
+              estimatedMinutes: 75,
+              url: "https://www.sqlite.org/lang_with.html",
+              type: "build"
+            },
+            {
+              id: "tel-design",
+              label: "Write DESIGN.md",
+              detail: "CS50's design document, about 1,000 words: purpose, scope, entities, relationships, optimizations and limitations, with your diagram.",
+              estimatedMinutes: 90,
+              url: "https://cs50.harvard.edu/sql/project/",
+              type: "build"
+            },
+            {
+              id: "tel-publish",
+              label: "Publish the project on GitHub",
+              detail: "A new public repository. The full CSV is too big for GitHub (100 MB per file), so commit a small sample plus instructions for downloading the rest.",
+              estimatedMinutes: 30,
+              url: "https://docs.github.com/en/repositories/creating-and-managing-repositories/quickstart-for-repositories",
+              type: "build"
+            },
+            {
+              id: "tel-readme",
+              label: "Write the README (Phase 1 deliverable)",
+              detail: "In this order: the problem, the data, your approach, key findings with numbers, a screenshot, how to run it, and what you'd do next.",
+              estimatedMinutes: 60,
+              url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+              type: "build"
+            },
+            {
+              id: "tel-video",
+              label: "Optional: record the CS50 video",
+              detail: "Only needed for CS50's free certificate. Up to 3 minutes. Open with the project title, your name, your GitHub and edX usernames, Manila as your city, and the date. Upload it to YouTube as Unlisted (not Private).",
+              estimatedMinutes: 60,
+              url: "https://cs50.harvard.edu/sql/project/",
+              type: "build",
+              optional: true
+            },
+            {
+              id: "tel-submit",
+              label: "Optional: submit to CS50 for the certificate",
+              detail: "Needs all seven problem sets submitted too. Fill in CS50's project form, run submit50 from the folder with your three files, then claim the certificate at cs50.me/cs50sql. Deadline 30 June 2027.",
+              estimatedMinutes: 30,
+              url: "https://cs50.harvard.edu/sql/project/",
+              type: "setup",
+              optional: true
+            }
+          ]
+        },
+
       ],
       extras: [
         {
@@ -474,19 +667,19 @@ const CURRICULUM = {
       id: "powerbi",
       name: "Power BI, Power Query & DAX",
       shortName: "Power BI",
-      dayStart: 43,
-      dayEnd: 98,
-      estimatedHours: 40,
+      dayStart: 80,
+      dayEnd: 133,
+      estimatedHours: 37,
       why: "Power BI is in most analyst job posts, and Power Query is the closest thing to what you already do every day.",
-      deliverable: "One finished Power BI report: messy CSV in, cleaned in Power Query, modelled as a star schema, 3–4 visuals out. The thing you screen-share in interviews.",
-      deliverableName: "Power BI report",
-      linkHint: "A Google Drive or OneDrive link to the .pbix and screenshots",
+      deliverable: "A Power BI budget vs actual dashboard on Microsoft's AdventureWorks finance data: cleaned in Power Query, a star schema, and DAX for variance and year-to-date. On GitHub as a Power BI project with screenshots.",
+      deliverableName: "Budget vs actual dashboard",
+      linkHint: "https://github.com/your-name/budget-vs-actual",
       modules: [
         {
           id: "pq-excel",
           name: "Power Query inside Excel",
-          dayStart: 43,
-          dayEnd: 52,
+          dayStart: 80,
+          dayEnd: 88,
           skill: "Clean and reshape data repeatably with Power Query",
           tasks: [
             {
@@ -558,8 +751,8 @@ const CURRICULUM = {
         {
           id: "pbi-basics",
           name: "Power BI Desktop basics",
-          dayStart: 53,
-          dayEnd: 62,
+          dayStart: 89,
+          dayEnd: 97,
           skill: "Load, shape and visualise data in Power BI Desktop",
           tasks: [
             {
@@ -612,8 +805,8 @@ const CURRICULUM = {
             },
             {
               id: "pick-dataset",
-              label: "Choose the dataset for your final report",
-              detail: "Browse Kaggle for something messy with dates, categories and amounts (sales, orders, bookings). Pick one you're curious about — you'll live with it for a month.",
+              label: "Choose a practice dataset for modelling",
+              detail: "Browse Kaggle for a flat, messy table with dates, categories and amounts (sales, orders, bookings). It's for practising star schemas in the next module; your portfolio project uses a different dataset.",
               estimatedMinutes: 30,
               url: "https://www.kaggle.com/datasets?search=sales",
               type: "practice"
@@ -623,8 +816,8 @@ const CURRICULUM = {
         {
           id: "pbi-modeling",
           name: "Data modeling — star schema",
-          dayStart: 63,
-          dayEnd: 74,
+          dayStart: 98,
+          dayEnd: 107,
           skill: "Build a star schema in Power BI with fact and dimension tables",
           tasks: [
             {
@@ -704,8 +897,8 @@ const CURRICULUM = {
         {
           id: "dax",
           name: "DAX core",
-          dayStart: 75,
-          dayEnd: 86,
+          dayStart: 108,
+          dayEnd: 118,
           skill: "Write DAX measures using CALCULATE, filter context and time intelligence",
           tasks: [
             {
@@ -783,80 +976,104 @@ const CURRICULUM = {
           ]
         },
         {
-          id: "pbi-report",
-          name: "Build one complete report",
-          dayStart: 87,
-          dayEnd: 98,
-          skill: "Build an end-to-end Power BI report, from raw CSV to finished visuals",
+          id: "bva",
+          name: "Portfolio project: Budget vs actual dashboard",
+          dayStart: 119,
+          dayEnd: 133,
+          skill: "Build a budget vs actual dashboard end to end: Power Query, star schema, variance and year-to-date DAX",
           tasks: [
             {
-              id: "report-questions",
-              label: "Write the 3 questions your report answers",
-              detail: "Business questions, not chart names — 'Which regions are growing?' not 'bar chart of regions'. Every visual you build should answer one of these.",
+              id: "bva-plan",
+              label: "Budget vs actual dashboard: plan it",
+              detail: "Ground rule for every portfolio project: you write the SQL, DAX and Python yourself. Claude only helps with the README layout. Write the 3 or 4 questions the dashboard answers, e.g. which departments are over budget this year, and by how much.",
               estimatedMinutes: 30,
               url: "",
               type: "build"
             },
             {
-              id: "report-clean-1",
-              label: "Report: load and clean (part 1)",
-              detail: "Start a fresh .pbix from the raw CSV. Rebuilding from scratch is the point — it proves you can do it without the earlier sketch.",
+              id: "bva-download",
+              label: "Download the AdventureWorks finance files",
+              detail: "Microsoft's free AdventureWorks sample: FactFinance (monthly Actual and Budget amounts, 2010–2013) plus DimScenario, DimAccount, DimOrganization, DimDepartmentGroup and DimDate. Use the Windows machine for this project.",
+              estimatedMinutes: 30,
+              url: "https://github.com/microsoft/sql-server-samples/tree/master/samples/databases/adventure-works/data-warehouse-install-script",
+              type: "setup"
+            },
+            {
+              id: "bva-clean-1",
+              label: "Power Query: load and clean (part 1)",
+              detail: "The files have no header row and use | as the separator. Load them, set the separator, and name the columns using instawdbdw.sql in the same folder.",
               estimatedMinutes: 60,
               url: "",
               type: "build"
             },
             {
-              id: "report-clean-2",
-              label: "Report: load and clean (part 2)",
-              detail: "Finish cleaning. Rename every applied step so someone else could read your query.",
+              id: "bva-clean-2",
+              label: "Power Query: load and clean (part 2)",
+              detail: "Set data types, keep the Actual and Budget scenarios, and rename every applied step so someone else could follow it.",
               estimatedMinutes: 60,
               url: "",
               type: "build"
             },
             {
-              id: "report-model",
-              label: "Report: build the star schema",
-              detail: "Fact, dimensions, date table, relationships. Use your sketch.",
+              id: "bva-model",
+              label: "Build the star schema",
+              detail: "FactFinance in the middle; account, organization, department, scenario and date around it. Mark the date table and check every relationship runs one-to-many.",
+              estimatedMinutes: 60,
+              url: "https://learn.microsoft.com/en-us/power-bi/guidance/star-schema",
+              type: "build"
+            },
+            {
+              id: "bva-variance",
+              label: "DAX: actual, budget and variance",
+              detail: "Measures for Actual, Budget, Variance and Variance % (with DIVIDE). Check revenue and expense accounts: over budget is good for one and bad for the other.",
+              estimatedMinutes: 60,
+              url: "https://learn.microsoft.com/en-us/dax/divide-function-dax",
+              type: "build"
+            },
+            {
+              id: "bva-ytd",
+              label: "DAX: year to date",
+              detail: "Year-to-date Actual, Budget and Variance with TOTALYTD. Check one month against a number you work out by hand.",
+              estimatedMinutes: 60,
+              url: "https://learn.microsoft.com/en-us/dax/totalytd-function-dax",
+              type: "build"
+            },
+            {
+              id: "bva-visuals-1",
+              label: "Build the dashboard page",
+              detail: "One page that answers your questions: variance by department, a month-by-month trend, and a year-to-date card. Give each visual a title that states the answer.",
               estimatedMinutes: 60,
               url: "",
               type: "build"
             },
             {
-              id: "report-measures",
-              label: "Report: write the measures",
-              detail: "Only the measures your 3 questions need. Put them in a dedicated measures table.",
-              estimatedMinutes: 60,
-              url: "",
-              type: "build"
-            },
-            {
-              id: "report-visuals-1",
-              label: "Report: build the visuals",
-              detail: "3–4 visuals, one page. A title on each that states the answer, not just the topic.",
-              estimatedMinutes: 60,
-              url: "",
-              type: "build"
-            },
-            {
-              id: "report-visuals-2",
-              label: "Report: polish the page",
-              detail: "Alignment, consistent colours, remove anything that doesn't answer a question. Revisit the 'Design effective reports' path if you're unsure.",
+              id: "bva-visuals-2",
+              label: "Polish the page",
+              detail: "Alignment, consistent colours, and nothing that doesn't answer a question. Revisit 'Design effective reports' if you're unsure.",
               estimatedMinutes: 60,
               url: "https://learn.microsoft.com/en-us/training/paths/power-bi-effective/",
               type: "build"
             },
             {
-              id: "report-writeup",
-              label: "Write up the report (Phase 2 deliverable)",
-              detail: "Screenshots, your model paragraph, and a short note: the data, the questions, what you found, what you'd do next. Save the .pbix alongside it.",
+              id: "bva-publish",
+              label: "Save as a Power BI project and put it on GitHub",
+              detail: "File → Save as → Power BI project (.pbip). It saves the report as text files, so GitHub can show exactly which measure changed. Publish to web needs a work account, so the repository shows screenshots plus the project files.",
               estimatedMinutes: 45,
-              url: "",
+              url: "https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-overview",
+              type: "build"
+            },
+            {
+              id: "bva-readme",
+              label: "Write the README (Phase 2 deliverable)",
+              detail: "In this order: the problem, the data, your approach, key findings with numbers, a screenshot, how to run it, and what you'd do next.",
+              estimatedMinutes: 60,
+              url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
               type: "build"
             },
             {
               id: "report-rehearse",
               label: "Rehearse the 3-minute walkthrough",
-              detail: "Talk through the report out loud as if screen-sharing in an interview: problem, data, model, one insight. Record yourself once if you can bear it.",
+              detail: "Talk through the dashboard out loud as if screen-sharing in an interview: problem, data, model, one insight. Record yourself once if you can bear it.",
               estimatedMinutes: 30,
               url: "",
               type: "practice"
@@ -885,19 +1102,19 @@ const CURRICULUM = {
       id: "python",
       name: "Python for Data",
       shortName: "Python",
-      dayStart: 99,
-      dayEnd: 140,
-      estimatedHours: 30,
+      dayStart: 134,
+      dayEnd: 180,
+      estimatedHours: 32,
       why: "The goal isn't to become a software engineer — it's to read, modify and debug a data script, and write a straightforward one from scratch.",
-      deliverable: "A Python script that turns a messy file into a clean one — ideally rebuilding one of your Excel/VBA tools, so you can compare both approaches.",
-      deliverableName: "Python cleaning script",
-      linkHint: "https://github.com/your-name/…",
+      deliverable: "A Python pipeline that cleans fake, messy contact data: standardised, duplicates and problem rows flagged in helper columns (nothing deleted), loaded into SQLite, with a summary report.",
+      deliverableName: "Mailing list cleaning pipeline",
+      linkHint: "https://github.com/your-name/mailing-list-pipeline",
       modules: [
         {
           id: "py-basics",
           name: "Python basics",
-          dayStart: 99,
-          dayEnd: 108,
+          dayStart: 134,
+          dayEnd: 143,
           skill: "Write Python with variables, loops, functions and file handling",
           tasks: [
             {
@@ -977,8 +1194,8 @@ const CURRICULUM = {
         {
           id: "pandas",
           name: "pandas",
-          dayStart: 109,
-          dayEnd: 120,
+          dayStart: 144,
+          dayEnd: 153,
           skill: "Load, filter, group, merge and clean tabular data with pandas",
           tasks: [
             {
@@ -1057,10 +1274,10 @@ const CURRICULUM = {
         },
         {
           id: "py-cleaning",
-          name: "Real cleaning on a messy dataset",
-          dayStart: 121,
-          dayEnd: 130,
-          skill: "Clean a messy real-world dataset in Python, with every step documented",
+          name: "Cleaning and reshaping with pandas",
+          dayStart: 154,
+          dayEnd: 158,
+          skill: "Load messy files, then clean, combine and reshape them with pandas",
           tasks: [
             {
               id: "wes-ch6",
@@ -1093,47 +1310,15 @@ const CURRICULUM = {
               estimatedMinutes: 45,
               url: "https://wesmckinney.com/book/data-aggregation",
               type: "reading"
-            },
-            {
-              id: "pick-messy-data",
-              label: "Find a genuinely messy dataset",
-              detail: "data.gov is full of them. You want inconsistent dates, duplicate rows, and categories spelled three ways. You'll reuse it for your dbt project later.",
-              estimatedMinutes: 30,
-              url: "https://catalog.data.gov/",
-              type: "practice"
-            },
-            {
-              id: "clean-profile",
-              label: "Load and profile the dataset",
-              detail: "Shape, column types, blanks per column, a few value counts. Write down every problem you find before fixing any.",
-              estimatedMinutes: 60,
-              url: "",
-              type: "build"
-            },
-            {
-              id: "clean-fix",
-              label: "Fix the problems",
-              detail: "Types, duplicates, missing values, inconsistent categories — one at a time, checking the row count after each step.",
-              estimatedMinutes: 60,
-              url: "",
-              type: "build"
-            },
-            {
-              id: "clean-log",
-              label: "Write a cleaning log",
-              detail: "A short markdown file: each problem, how you fixed it, and how many rows it affected. This is exactly what a reviewer wants to see.",
-              estimatedMinutes: 45,
-              url: "",
-              type: "build"
             }
           ]
         },
         {
           id: "py-automate",
-          name: "Automating a repetitive task end to end",
-          dayStart: 131,
-          dayEnd: 140,
-          skill: "Automate a repetitive spreadsheet task end to end with Python",
+          name: "Files, spreadsheets and CSV from Python",
+          dayStart: 159,
+          dayEnd: 163,
+          skill: "Read and write files, Excel workbooks, Google Sheets and CSV/JSON from Python",
           tasks: [
             {
               id: "atbs-organize",
@@ -1166,306 +1351,113 @@ const CURRICULUM = {
               estimatedMinutes: 45,
               url: "https://automatetheboringstuff.com/3e/chapter15.html",
               type: "reading"
-            },
-            {
-              id: "auto-pick",
-              label: "Pick the Excel/VBA tool to rebuild",
-              detail: "Choose one you've built that takes a messy file and produces a clean one. Write its steps in plain English — that's your spec.",
-              estimatedMinutes: 30,
-              url: "",
-              type: "build"
-            },
-            {
-              id: "auto-build-1",
-              label: "Rebuild it in Python (part 1)",
-              detail: "Read the input and get the first half of the steps working. Check against your Excel output as you go.",
-              estimatedMinutes: 60,
-              url: "",
-              type: "build"
-            },
-            {
-              id: "auto-build-2",
-              label: "Rebuild it in Python (part 2)",
-              detail: "Remaining steps and writing the clean output.",
-              estimatedMinutes: 60,
-              url: "",
-              type: "build"
-            },
-            {
-              id: "auto-build-3",
-              label: "Make it run on next month's file",
-              detail: "No editing the code to run it: the file path comes in as an argument or from a folder. Test it on a second file.",
-              estimatedMinutes: 60,
-              url: "",
-              type: "build"
-            },
-            {
-              id: "auto-compare",
-              label: "Write the VBA vs Python comparison (Phase 3 deliverable)",
-              detail: "Half a page: what was easier in each, what was harder, which you'd pick for what. This is the paragraph you'll draw on in interviews.",
-              estimatedMinutes: 30,
-              url: "",
-              type: "build"
             }
           ]
-        }
-      ]
-    },
-
-    // ───────────────────────────────────────────────────────────── PHASE 4
-    {
-      id: "portfolio",
-      name: "Git, dbt & Portfolio",
-      shortName: "Git & dbt",
-      dayStart: 141,
-      dayEnd: 180,
-      estimatedHours: 30,
-      why: "A public GitHub with three real projects changes what you can apply for.",
-      deliverable: "A public GitHub profile with 3 repos — the SQL pattern library, the Python cleaning script, and a small dbt project — each with a README covering the problem, the approach, and what you'd do differently.",
-      deliverableName: "GitHub portfolio",
-      linkHint: "https://github.com/your-name",
-      modules: [
+        },
         {
-          id: "git",
-          name: "Git and GitHub fundamentals",
-          dayStart: 141,
-          dayEnd: 150,
-          skill: "Version-control work with Git and share it on GitHub",
+          id: "mailing",
+          name: "Portfolio project: Mailing list cleaning pipeline",
+          dayStart: 164,
+          dayEnd: 176,
+          skill: "Build a repeatable cleaning pipeline in Python: standardise, deduplicate, flag for review, load into SQLite and report",
           tasks: [
             {
-              id: "git-what",
-              label: "Read: What is Git?",
-              detail: "The short official explanation. Git is a save history for a folder — every version kept, any one recoverable.",
-              estimatedMinutes: 20,
-              url: "https://git-scm.com/book/en/v2/Getting-Started-What-is-Git%3F",
-              type: "reading"
-            },
-            {
-              id: "lgb-intro",
-              label: "Learn Git Branching: Introduction sequence",
-              detail: "A visual game. Do the four Introduction levels — commits, branches, merging, rebasing.",
-              estimatedMinutes: 45,
-              url: "https://learngitbranching.js.org/?locale=en_US",
-              type: "interactive"
-            },
-            {
-              id: "lgb-ramp",
-              label: "Learn Git Branching: Ramping up",
-              detail: "Moving around history and undoing things. The undo levels are the ones you'll actually need.",
-              estimatedMinutes: 45,
-              url: "https://learngitbranching.js.org/?locale=en_US",
-              type: "interactive"
-            },
-            {
-              id: "lgb-remote",
-              label: "Learn Git Branching: Remote (first levels)",
-              detail: "Switch to the Remote tab. Push, pull and fetch — how your machine talks to GitHub.",
-              estimatedMinutes: 45,
-              url: "https://learngitbranching.js.org/?locale=en_US",
-              type: "interactive"
-            },
-            {
-              id: "git-install",
-              label: "Install Git and create your GitHub account",
-              detail: "Git for Windows from the official site, then sign up at github.com. Pick a username you'd be happy to put on a CV.",
+              id: "mail-plan",
+              label: "Mailing list pipeline: plan it",
+              detail: "Ground rule for every portfolio project: you write the SQL, DAX and Python yourself. Claude only helps with the README layout. Write the steps in plain English: make the data, clean, standardise, find duplicates, flag rows for review, load into SQLite, write a summary. Two rules: fake data only, never client data; and never delete a row, flag it in a helper column instead.",
               estimatedMinutes: 30,
-              url: "https://git-scm.com/downloads/win",
-              type: "setup"
+              url: "",
+              type: "build"
             },
             {
-              id: "gh-skills-intro",
-              label: "GitHub Skills: Introduction to GitHub",
-              detail: "A guided course that runs inside a real repository on your account. Follow the instructions in the README.",
+              id: "mail-faker",
+              label: "Make fake messy contact data with Faker",
+              detail: "Install Faker and generate about 2,000 contacts. Then make them messy on purpose: mixed case, stray spaces, phone numbers in several formats, missing emails, the same person twice with small differences. Set a seed so you get the same file every run.",
               estimatedMinutes: 60,
-              url: "https://github.com/skills/introduction-to-github",
-              type: "interactive"
+              url: "https://faker.readthedocs.io/en/master/",
+              type: "build"
             },
             {
-              id: "gh-skills-markdown",
-              label: "GitHub Skills: Communicate using Markdown",
-              detail: "How READMEs are written. You'll write four of these by the end.",
-              estimatedMinutes: 45,
-              url: "https://github.com/skills/communicate-using-markdown",
-              type: "interactive"
-            },
-            {
-              id: "gh-skills-pr",
-              label: "GitHub Skills: Review pull requests",
-              detail: "How teams propose and check changes. Most analytics engineering teams work this way.",
-              estimatedMinutes: 45,
-              url: "https://github.com/skills/review-pull-requests",
-              type: "interactive"
-            },
-            {
-              id: "repo-sql",
-              label: "Publish your SQL pattern library",
-              detail: "Create a public repo called sql-patterns and push your cheat sheet to it. Your first real repo.",
+              id: "mail-names-emails",
+              label: "Clean and standardise names and emails",
+              detail: "Trim, fix case, split or join name parts, lower-case emails. Put the cleaned value in a new column next to the original, so you can always see what changed.",
               estimatedMinutes: 60,
               url: "",
+              type: "build"
+            },
+            {
+              id: "mail-phones-addresses",
+              label: "Standardise phone numbers and addresses",
+              detail: "One phone format, consistent address parts. Rows you can't fix get a reason in a helper column, not deleted.",
+              estimatedMinutes: 60,
+              url: "",
+              type: "build"
+            },
+            {
+              id: "mail-dedupe",
+              label: "Find duplicates and flag them",
+              detail: "Exact duplicates first, then near-duplicates on cleaned name plus email or phone. Helper columns like duplicate_group and keep_this_row; every row stays.",
+              estimatedMinutes: 60,
+              url: "https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.duplicated.html",
+              type: "build"
+            },
+            {
+              id: "mail-review",
+              label: "Flag rows for review",
+              detail: "A needs_review column and a review_reason column: bad email, no way to contact, a possible duplicate you weren't sure about. Count each reason.",
+              estimatedMinutes: 45,
+              url: "",
+              type: "build"
+            },
+            {
+              id: "mail-sqlite",
+              label: "Load the result into SQLite",
+              detail: "Write the cleaned table to a SQLite database with pandas, then query it with the SQL you know to check the counts match.",
+              estimatedMinutes: 45,
+              url: "https://docs.python.org/3/library/sqlite3.html",
+              type: "build"
+            },
+            {
+              id: "mail-report",
+              label: "Write the summary report",
+              detail: "The script writes a short report file: rows in, rows cleaned, duplicates found, rows needing review by reason. These numbers become your README's key findings.",
+              estimatedMinutes: 60,
+              url: "",
+              type: "build"
+            },
+            {
+              id: "mail-run",
+              label: "Make it run in one command",
+              detail: "From fake data to report with one command and no editing of the code. Delete the outputs and run it again to prove it.",
+              estimatedMinutes: 45,
+              url: "",
+              type: "build"
+            },
+            {
+              id: "mail-publish",
+              label: "Publish the project on GitHub",
+              detail: "Push the code, a small sample of the fake input, and the report. Fake data only.",
+              estimatedMinutes: 30,
+              url: "https://docs.github.com/en/repositories/creating-and-managing-repositories/quickstart-for-repositories",
+              type: "build"
+            },
+            {
+              id: "mail-readme",
+              label: "Write the README (Phase 3 deliverable)",
+              detail: "In this order: the problem, the data, your approach, key findings with numbers, a screenshot, how to run it, and what you'd do next.",
+              estimatedMinutes: 60,
+              url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
               type: "build"
             }
           ]
         },
         {
-          id: "dbt",
-          name: "dbt Fundamentals",
-          dayStart: 151,
-          dayEnd: 166,
-          skill: "Build tested, documented data models with dbt",
-          tasks: [
-            {
-              id: "dbt-fund-1",
-              label: "dbt Fundamentals: Welcome and setup",
-              detail: "The official free course. Create a free dbt account and follow the setup — the course provides a trial warehouse, which is fine for learning.",
-              estimatedMinutes: 60,
-              url: "https://learn.getdbt.com/courses/dbt-fundamentals",
-              type: "interactive"
-            },
-            {
-              id: "dbt-fund-2",
-              label: "dbt Fundamentals: Models",
-              detail: "A model is a SELECT statement saved as a file — your CTE skills, organised.",
-              estimatedMinutes: 60,
-              url: "https://learn.getdbt.com/courses/dbt-fundamentals",
-              type: "interactive"
-            },
-            {
-              id: "dbt-fund-3",
-              label: "dbt Fundamentals: Sources",
-              detail: "Declaring where raw data comes from, so dbt can trace every model back to it.",
-              estimatedMinutes: 60,
-              url: "https://learn.getdbt.com/courses/dbt-fundamentals",
-              type: "interactive"
-            },
-            {
-              id: "dbt-fund-4",
-              label: "dbt Fundamentals: Tests",
-              detail: "Automated checks — unique, not null, accepted values. Reconciliation, built in.",
-              estimatedMinutes: 60,
-              url: "https://learn.getdbt.com/courses/dbt-fundamentals",
-              type: "interactive"
-            },
-            {
-              id: "dbt-fund-5",
-              label: "dbt Fundamentals: Documentation and deployment",
-              detail: "Finish the course. The documentation site dbt generates is one of the nicest things to show in an interview.",
-              estimatedMinutes: 60,
-              url: "https://learn.getdbt.com/courses/dbt-fundamentals",
-              type: "interactive"
-            },
-            {
-              id: "dbt-local-setup",
-              label: "Set up dbt on your own machine (free, no expiry)",
-              detail: "Install dbt with the DuckDB adapter so your portfolio project doesn't depend on a trial. Claude Code can walk you through the commands.",
-              estimatedMinutes: 60,
-              url: "https://github.com/duckdb/dbt-duckdb",
-              type: "setup"
-            },
-            {
-              id: "dbt-jaffle",
-              label: "Run the jaffle_shop example locally",
-              detail: "dbt's official sample project, already set up for DuckDB. Get it running end to end before building your own.",
-              estimatedMinutes: 45,
-              url: "https://github.com/dbt-labs/jaffle_shop_duckdb",
-              type: "practice"
-            },
-            {
-              id: "dbt-own-staging",
-              label: "Your dbt project: sources and staging models",
-              detail: "Use the messy dataset from Phase 3. One staging model per raw table: rename, cast types, nothing clever.",
-              estimatedMinutes: 60,
-              url: "https://docs.getdbt.com/docs/build/sources",
-              type: "build"
-            },
-            {
-              id: "dbt-own-mart",
-              label: "Your dbt project: a mart model",
-              detail: "One model that answers a real question — the dbt version of your Power BI fact table.",
-              estimatedMinutes: 60,
-              url: "",
-              type: "build"
-            },
-            {
-              id: "dbt-own-tests",
-              label: "Your dbt project: tests and docs",
-              detail: "Add tests to every key column and a description to every model. Generate the docs site and look at it.",
-              estimatedMinutes: 60,
-              url: "https://docs.getdbt.com/docs/build/data-tests",
-              type: "build"
-            },
-            {
-              id: "repo-dbt",
-              label: "Publish your dbt project",
-              detail: "Push it to a public repo. Leave the README for the portfolio module.",
-              estimatedMinutes: 30,
-              url: "",
-              type: "build"
-            }
-          ]
-        },
-        {
-          id: "portfolio-build",
-          name: "Portfolio assembly and write-ups",
-          dayStart: 167,
+          id: "career",
+          name: "Portfolio review and CV",
+          dayStart: 177,
           dayEnd: 180,
           skill: "Present technical work clearly in a public portfolio",
           tasks: [
-            {
-              id: "repo-python",
-              label: "Publish your Python cleaning script",
-              detail: "Push the script, a small sample input file, and your cleaning log. Don't upload anything confidential from work.",
-              estimatedMinutes: 45,
-              url: "",
-              type: "build"
-            },
-            {
-              id: "readme-sql",
-              label: "README: SQL pattern library",
-              detail: "Three sections: the problem, the approach, what you'd do differently. Short beats thorough.",
-              estimatedMinutes: 45,
-              url: "",
-              type: "build"
-            },
-            {
-              id: "readme-python",
-              label: "README: Python cleaning script",
-              detail: "Include the VBA vs Python comparison — it's the most interesting part.",
-              estimatedMinutes: 45,
-              url: "",
-              type: "build"
-            },
-            {
-              id: "readme-dbt",
-              label: "README: dbt project",
-              detail: "Include a screenshot of the lineage graph from the docs site.",
-              estimatedMinutes: 45,
-              url: "",
-              type: "build"
-            },
-            {
-              id: "profile-readme",
-              label: "Write your GitHub profile README",
-              detail: "The page people see first. Two lines about you, links to the three repos, and a line about the Power BI report.",
-              estimatedMinutes: 45,
-              url: "https://docs.github.com/en/account-and-profile/how-tos/profile-customization/managing-your-profile-readme",
-              type: "build"
-            },
-            {
-              id: "pbi-showcase",
-              label: "Add your Power BI report to the portfolio",
-              detail: "Screenshots and the write-up from Phase 2, in a repo or on your profile. The .pbix itself can live in Drive.",
-              estimatedMinutes: 45,
-              url: "",
-              type: "build"
-            },
-            {
-              id: "gh-skills-pages",
-              label: "GitHub Skills: GitHub Pages",
-              detail: "How to publish a website straight from a repo. The Climb itself runs this way.",
-              estimatedMinutes: 45,
-              url: "https://github.com/skills/github-pages",
-              type: "interactive"
-            },
             {
               id: "climb-on-pages",
               label: "Write a README for The Climb as a portfolio piece",
@@ -1477,15 +1469,15 @@ const CURRICULUM = {
             {
               id: "portfolio-review",
               label: "Review everything as a hiring manager would",
-              detail: "Open your profile in a private window. Five minutes per repo: is it clear what this is and why it's good? Fix what isn't.",
+              detail: "Open your GitHub profile and your site in a private window. Five minutes per project: is it clear what it is and why it's good? Fix what isn't.",
               estimatedMinutes: 45,
               url: "",
               type: "practice"
             },
             {
               id: "update-cv",
-              label: "Update your CV (Phase 4 deliverable)",
-              detail: "Add your GitHub link and pull lines from the Skills list on the Progress screen. You've earned every one of them.",
+              label: "Update your CV",
+              detail: "Add your GitHub and site links, and pull lines from the Skills list on the Progress screen. You've earned every one of them.",
               estimatedMinutes: 45,
               url: "",
               type: "build"

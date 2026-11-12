@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-11-12: CS50 SQL, portfolio projects, Portfolio site
+
+- **CS50 SQL is Phase 1's main course:** weeks 0–6, each lecture in two halves and each problem set in one or two sittings. SQLBolt, SQLZoo, the SQL Tutorial and PostgreSQL Exercises lessons that weren't done yet are gone; DataLemur's CTE lesson, the window-function lessons and one set of interview questions stay, because CS50 barely covers them.
+- **Done before the switch:** the 10 Phase 1 tasks finished before the change (SQLBolt 1–5, three SQLZoo sets, PostgreSQL Exercises Basic and the cheat-sheet start) stay as their own group at the start of Phase 1, with their time and their skill line. The other cheat-sheet tasks are gone.
+- **Three phases now, still 180 days.** Day ranges are spread by hours: SQL days 1–79, Power BI 80–133, Python 134–180. The old Phase 4 is gone: Git moved to Phase 1 (each project needs GitHub), dbt Fundamentals and the old dbt project go to a later Data Engineering phase, and the last three tasks (README for The Climb, the hiring-manager review, the CV) now close Phase 3. The repeated README and "publish" tasks were removed, because each project now has its own.
+- **Portfolio projects** replace the phase deliverables:
+  - Phase 1: *Telecom complaints database*, on the FCC's Consumer Complaints data (opendata.fcc.gov, dataset 3xyp-aqkj). It is also the CS50 SQL final project. The video and the submission are optional tasks, needed only for the certificate (deadline 30 June 2027).
+  - Phase 2: *Budget vs actual dashboard*, on Microsoft's AdventureWorks finance sample (monthly Actual and Budget, 2010–2013). Saved as a Power BI project (PBIP), so GitHub shows the changes as text, with screenshots, because Publish to web needs a work account. The Kaggle dataset task stays, now as practice for the modelling module.
+  - Phase 3: *Mailing list cleaning pipeline*, on fake contact data made with Faker. Rows are flagged in helper columns, never deleted. It replaces the VBA rebuild and the cleaning practice on a data.gov file.
+- **Optional tasks:** a task can be marked optional. It shows on the Map with "Optional", never on Today, and isn't needed for its module to be finished.
+- **Portfolio site side module** (`sidemodule-site.js`): steps 0–9 to build your own site by hand with The Odin Project, MDN and Kevin Powell, unlocked by the telecom README. It's about 28 hours, plus 6 for the optional stretch steps. Card reminders for the Power BI and Python projects wait until those projects are finished. It has its own Portfolio card. Its first task sets the rule: you write the code; AI only explains errors and reviews your code afterwards.
+- All new links checked on 2026-11-12.
+
 ## 2026-11-06: Moved to GitHub Pages and Supabase
 
 - The Climb is no longer a Claude artifact. The app is published on GitHub Pages from the `climb/` folder, and progress is saved in your own free Supabase project.

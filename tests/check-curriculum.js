@@ -35,14 +35,18 @@ for(const {name, plan, needsSkill} of PLANS){
   console.log(`TOTAL ${n} tasks, ${(total/60).toFixed(1)}h`);
 }
 // Side modules: no days, but the same task rules, and ids unique across everything.
-for(const [file,name] of [['sidemodule-finance.js','SIDE_FINANCE']]){
+const dataIds=new Set(PLANS[0].plan.phases.flatMap(p=>p.modules.flatMap(m=>m.tasks.map(t=>t.id))));
+for(const [file,name] of [['sidemodule-finance.js','SIDE_FINANCE'],['sidemodule-site.js','SIDE_SITE']]){
   const sm=load(file,name); let n=0, mins=0;
   for(const m of sm.modules){ if(!m.tasks.length) errs.push(`${name}: module ${m.id} has no tasks`);
     for(const t of m.tasks){ n++; mins+=t.estimatedMinutes;
       if(ids.has(t.id)) errs.push('dup id '+t.id); ids.add(t.id);
       if(!types.has(t.type)) errs.push('bad type '+t.id);
-      for(const k of ['label','detail','estimatedMinutes','url']) if(!t[k]) errs.push(`${t.id} missing ${k}`);
+      for(const k of ['label','detail','estimatedMinutes']) if(!t[k]) errs.push(`${t.id} missing ${k}`);
+      if(typeof t.url!=='string' || (!t.url && !['build','practice'].includes(t.type))) errs.push(`${t.id} needs a link`);
+      if(t.unlockedBy && !dataIds.has(t.unlockedBy)) errs.push(`${t.id} waits for unknown task ${t.unlockedBy}`);
       for(const x of t.more||[]) if(!x.label||!/^https:\/\//.test(x.url)) errs.push(`${t.id} has a bad extra link`); } }
+  if(sm.unlockedBy && !dataIds.has(sm.unlockedBy.taskId)) errs.push(`${name}: unlocks on unknown task ${sm.unlockedBy.taskId}`);
   if(sm.portfolio && !sm.modules.some(m=>m.tasks.some(t=>t.id===sm.portfolio.taskId))) errs.push(`${name}: portfolio task ${sm.portfolio.taskId} not found`);
   console.log(`— Side module ${sm.name}: ${n} tasks, ${(mins/60).toFixed(1)}h`);
 }

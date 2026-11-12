@@ -217,7 +217,7 @@
 
   function renderFinished(S) {
     const text = S.id === "data"
-      ? { kind: "All four phases", title: "That's the whole climb.", detail: "Every task is done. Your deliverables are on the Portfolio page, ready for the next application that asks for work samples.", link: `<a class="btn btn-solid" href="#portfolio">Open Portfolio</a>` }
+      ? { kind: "All three phases", title: "That's the whole climb.", detail: "Every task is done. Your deliverables are on the Portfolio page, ready for the next application that asks for work samples.", link: `<a class="btn btn-solid" href="#portfolio">Open Portfolio</a>` }
       : { kind: "Every week planned so far", title: `That's all of ${S.name}, for now.`, detail: "Keep the same rhythm going, and ask Claude Code to write the next stretch.", link: "" };
     return `
       <article class="card summit">
@@ -507,12 +507,17 @@
     const finish = () => {
       // Finishing a side module's last task: its group leaves Today, so the
       // message (and its Undo) shows under the subject instead.
+      // A side module can also leave Today for now, when its other tasks are
+      // waiting for a project to be finished.
       const sideDone = src !== S && src.tasks().every((t) => t.task.id === taskId || S.isDone(t.task.id));
+      const sidePaused = src !== S && !sideDone && !src.upcoming(src.tasks().length).some((t) => t.task.id !== taskId);
       flash = {
-        subject: sideDone ? S.id : key,
+        subject: sideDone || sidePaused ? S.id : key,
         text: sideDone
           ? `Logged ${duration(mins)} on “${label}”. That's all of ${src.name}: it stays on the Map.`
-          : `Logged ${duration(mins)} on “${label}”.`,
+          : sidePaused
+            ? `Logged ${duration(mins)} on “${label}”. ${src.name} is done for now: its next task appears when you finish ${src.waiting().map((w) => `“${w.waitsFor.task.label}”`)[0]}.`
+            : `Logged ${duration(mins)} on “${label}”.`,
         undo: () => S.undoDone(taskId)
       };
       arriving = key;
@@ -601,9 +606,9 @@
     const W = 600, H = 120, TOP = 16, BOTTOM = 8;
     const total = S().totalDays();
     const phases = S().plan.phases;
-    // Height reached at the end of each phase. Data's four phases climb unevenly;
+    // Height reached at the end of each phase. Data's three phases climb unevenly;
     // other subjects climb in even steps.
-    const heights = phases.length === 4 ? [0.22, 0.58, 0.8, 1] : phases.map((p, i) => (i + 1) / phases.length);
+    const heights = phases.length === 3 ? [0.45, 0.78, 1] : phases.map((p, i) => (i + 1) / phases.length);
     const here = S().current() ? S().currentDay() - 1 : total;
 
     function elevation(day) {
@@ -667,9 +672,11 @@
     const isCurrent = cur && cur.task.id === task.id;
     const doneOn = done ? S().lastLoggedDate([task.id]) : null;
     const kind = (KIND[task.type] || KIND.build).label;
+    // A side task waiting for another task (e.g. a project card waiting for its project).
+    const waitsFor = !done && task.unlockedBy && !S().isDone(task.unlockedBy) ? S().find(task.unlockedBy) : null;
     const meta = done
       ? `Done${doneOn ? ` ${shortDate(doneOn)}` : ""}`
-      : `${S().unit === "day" && day ? `Day ${day} · ` : ""}${duration(task.estimatedMinutes)} · ${kind}`;
+      : `${entry.optional ? "Optional · " : S().unit === "day" && day ? `Day ${day} · ` : ""}${waitsFor ? `Appears after “${esc(waitsFor.task.label)}” · ` : ""}${duration(task.estimatedMinutes)} · ${kind}`;
     const title = task.url
       ? `<a href="${esc(task.url)}" target="_blank" rel="noopener">${esc(task.label)}</a>`
       : `<span>${esc(task.label)}</span>`;
@@ -690,12 +697,19 @@
 
   // `side` is set for a side module's modules, whose tasks aren't in the plan's list.
   function renderModule(module, cur, side) {
-    const s = S().moduleStats(module);
+    let s = S().moduleStats(module);
     const isCurrent = cur && cur.module.id === module.id;
+    // A module of optional tasks only (the site's stretch steps) is never "done" by default.
+    const optionalOnly = module.tasks.every((t) => t.optional);
+    if (optionalOnly) {
+      const n = module.tasks.filter((t) => S().isDone(t.id)).length;
+      s = { done: n, total: module.tasks.length, complete: n === module.tasks.length };
+    }
     const cls = stateClass(s.done, s.total, isCurrent);
     const open = mapOpen.modules.has(module.id);
-    const entries = (side ? side.tasks() : S().tasks()).filter((t) => t.module.id === module.id);
-    const status = s.complete ? "Done" : s.done ? `${s.done} of ${s.total}` : `${s.total} tasks`;
+    // Every task in the module, optional ones included, in the plan's order.
+    const entries = module.tasks.map((t) => S().find(t.id)).filter(Boolean);
+    const status = s.complete ? "Done" : s.done ? `${s.done} of ${s.total}` : `${optionalOnly ? "Optional · " : ""}${s.total} task${s.total === 1 ? "" : "s"}`;
     return `
       <section class="module ${cls}">
         <h3 class="module-h">
@@ -724,7 +738,7 @@
     const cls = s.status === "done" ? "is-done" : isCurrent ? "is-current" : "is-upcoming";
     const open = mapOpen.phases.has(phase.id);
     const finishedOn = s.status === "done"
-      ? S().lastLoggedDate(phase.modules.flatMap((m) => m.tasks.map((t) => t.id)))
+      ? S().lastLoggedDate(phase.modules.flatMap((m) => m.tasks.filter((t) => !t.optional).map((t) => t.id)))
       : null;
 
     let state;
@@ -771,14 +785,20 @@
     const cur = side.current();
     const done = side.done();
     const total = side.tasks().length;
-    const finishedOn = !cur ? S().lastLoggedDate(side.tasks().map((t) => t.task.id)) : null;
+    const finished = side.isFinished();
+    const finishedOn = finished ? S().lastLoggedDate(side.tasks().map((t) => t.task.id)) : null;
     const hrs = side.tasks().reduce((sum, t) => sum + t.task.estimatedMinutes, 0) / 60;
-    const state = !cur
-      ? `<span class="stamp">Finished${finishedOn ? ` · ${shortDate(finishedOn)}` : ""}</span>`
-      : `<span class="p-count">${done ? `${done} of ${total} tasks done` : `${total} tasks`} · on Today until it's finished</span>`;
+    const optionalMins = side.plan.modules.reduce((sum, m) => sum + m.tasks.filter((t) => t.optional).reduce((a, t) => a + t.estimatedMinutes, 0), 0);
+    const hours = `about ${Number.isInteger(hrs) ? hrs : hrs.toFixed(1)} hours${optionalMins ? ` (+${Math.round(optionalMins / 60)} optional)` : ""}`;
+    const waiting = side.waiting();
+    let state;
+    if (side.locked()) state = `<span class="p-count">Locked · ${esc(side.plan.unlockedBy.text)}</span>`;
+    else if (finished) state = `<span class="stamp">Finished${finishedOn ? ` · ${shortDate(finishedOn)}` : ""}</span>`;
+    else if (!cur && waiting.length) state = `<span class="p-count">${done} of ${total} tasks done · the rest appear on Today when you finish ${waiting.map((w) => `“${esc(w.waitsFor.task.label)}”`).join(" and ")}</span>`;
+    else state = `<span class="p-count">${done ? `${done} of ${total} tasks done` : `${total} tasks`} · on Today until it's finished</span>`;
     return `
-      <section class="side-map${cur ? "" : " is-done"}" aria-labelledby="side-${esc(side.id)}">
-        <p class="side-tag">Side module · ${side.plan.timeframe ? `${esc(side.plan.timeframe)} · ` : ""}about ${Number.isInteger(hrs) ? hrs : hrs.toFixed(1)} hours · not part of the ${S().totalDays()} days</p>
+      <section class="side-map${finished ? " is-done" : ""}" aria-labelledby="side-${esc(side.id)}">
+        <p class="side-tag">Side module · ${side.plan.timeframe ? `${esc(side.plan.timeframe)} · ` : ""}${hours} · not part of the ${S().totalDays()} days</p>
         <h2 class="side-name" id="side-${esc(side.id)}">${esc(side.name)}</h2>
         <p class="side-state">${state}</p>
         <p class="side-why">${esc(side.plan.why || "")}</p>
@@ -1308,7 +1328,7 @@
           </div>`;
   }
 
-  // Side modules with a piece of work get their own card, after the four phases.
+  // Side modules with a piece of work get their own card, after the phases.
   const sideWork = () => D().sides.filter((side) => side.plan.portfolio);
 
   function renderSideCard(side) {
@@ -1320,6 +1340,8 @@
     const state = done ? "is-done" : started ? "is-started" : "is-upcoming";
     const status = done
       ? `<span class="stamp">Done${doneOn ? ` · ${shortDate(doneOn)}` : ""}</span>`
+      : side.locked && side.locked()
+        ? `<span class="pf-status">Locked · ${esc(side.plan.unlockedBy.text)}</span>`
       : started
         ? `<span class="pf-status">In progress · ${side.done()} of ${side.tasks().length} tasks in the module</span>`
         : `<span class="pf-status">Not started</span>`;
@@ -1339,7 +1361,7 @@
       const s = D().phaseStats(phase);
       const link = D().state.portfolioLinks[phase.id] || "";
       const finishedOn = s.status === "done"
-        ? D().lastLoggedDate(phase.modules.flatMap((m) => m.tasks.map((t) => t.id)))
+        ? D().lastLoggedDate(phase.modules.flatMap((m) => m.tasks.filter((t) => !t.optional).map((t) => t.id)))
         : null;
       const isHere = cur && cur.phase.id === phase.id;
       const state = s.status === "done" ? "is-done" : s.done > 0 || isHere ? "is-started" : "is-upcoming";
@@ -1375,7 +1397,7 @@
       <div class="pf-stack">${cards}</div>
       ${sideWork().length ? `
         <section class="pf-side" aria-labelledby="pf-side-h">
-          <h2 class="pf-side-h" id="pf-side-h">Side work <span>Extra pieces from side modules, apart from the four above</span></h2>
+          <h2 class="pf-side-h" id="pf-side-h">Side work <span>Extra pieces from side modules, apart from the phase projects above</span></h2>
           <div class="pf-stack">${sideWork().map(renderSideCard).join("")}</div>
         </section>` : ""}
     `;
@@ -1480,7 +1502,7 @@
   function renderGuide() {
     const es = Store.subject("spanish");
     const sides = D().sides;
-    const sideOpen = sides.find((side) => !side.isFinished());
+    const sideOpen = sides.find((side) => side.current());
     view.innerHTML = `
       <header class="guide-intro">
         <p class="eyebrow">Guide</p>
@@ -1506,7 +1528,7 @@
           <div><dt>Today</dt><dd>Your next task in each subject, and nothing else.</dd></div>
           <div><dt>Map</dt><dd>A subject's whole plan. Tick tasks you did out of order, and keep notes.</dd></div>
           <div><dt>Progress</dt><dd>Hours each week, streak, skills and every session. Backups and each subject's settings are at the bottom.</dd></div>
-          <div><dt>Portfolio</dt><dd>A link to each Data phase's finished work${sides.some((side) => side.plan.portfolio) ? ", plus side work like the Variance report, in its own section" : ""}. Copy all links when an application asks for work samples.</dd></div>
+          <div><dt>Portfolio</dt><dd>A link to each Data phase's project${sides.some((side) => side.plan.portfolio) ? ", plus side work (the Variance report and your portfolio site) in its own section" : ""}. Copy all links when an application asks for work samples.</dd></div>
         </dl>
         <p class="fine">On the Map and Progress, pick the subject with the switch at the top. They always open on Data.</p>
       </section>
@@ -1525,7 +1547,10 @@
         <ul class="notes">
           <li><strong>Unticking.</strong> Undo appears right after Done. Later, untick any task on the Map. That doesn't remove time you logged; remove the session in Progress → Session log. Importing a backup only ever adds, so it can bring back a tick you removed.</li>
           <li><strong>Streaks count weeks.</strong> Study once in a week and the week counts. Skipping a day never breaks a streak.</li>
-          ${sides.length ? `<li><strong>Side modules</strong> are short extras beside the Data plan, like ${esc(sides[0].name)}. They don't change Data's day count or the 180 days, but their time counts toward Data's hours. Each shows on Today under Data until it's finished, then lives at the bottom of Data's Map.</li>` : ""}
+          ${sides.length ? `<li><strong>Side modules</strong> are extras beside the Data plan: ${sides.map((side) => esc(side.name)).join(" and ")}. They don't change Data's day count or the 180 days, but their time counts toward Data's hours. Each shows on Today under Data until it's finished, then lives at the bottom of Data's Map.</li>` : ""}
+          ${D().side("site") ? `<li><strong>Portfolio site</strong> unlocks when you finish the Telecom complaints database. Every task is an hour or less, so it fits a lighter week. Each “add this card to your site” task appears once its project is finished. Steps 8 and 9 are optional stretch steps: tick them on the Map, they never appear on Today.</li>` : ""}
+          <li><strong>Portfolio projects:</strong> one at the end of each phase (SQL, Power BI, Python), each ending with its README. You write the SQL, DAX and Python yourself; Claude only helps with the README layout.</li>
+          <li><strong>Optional tasks</strong> (like the CS50 video, for the certificate) are on the Map with “Optional”, never on Today, and a module is finished without them.</li>
           <li><strong>German</strong> unlocks when you tick the Spanish Term 2 exam (on Today or the Map). Untick the exam and it locks again, keeping its progress.</li>
           <li><strong>Back up monthly:</strong> Progress → Your data → Export progress. One file holds every subject.</li>
           <li><strong>Settings</strong> are at the bottom of Progress. Pick the subject with the switch at the top first.</li>

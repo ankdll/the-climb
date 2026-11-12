@@ -1,7 +1,7 @@
 // Tests for the data layer (store.js) using a pretend browser storage. Run: node tests/test-store.js
 const fs=require('fs'), assert=require('assert/strict');
 const dir=require('path').join(__dirname,'..','climb');
-const code=['curriculum.js','sidemodule-finance.js','spanish.js','german.js','store.js'].map(f=>fs.readFileSync(dir+'/'+f,'utf8')).join('\n')+'\n;return {Store, CURRICULUM, SPANISH, GERMAN};';
+const code=['curriculum.js','sidemodule-finance.js','sidemodule-site.js','spanish.js','german.js','store.js'].map(f=>fs.readFileSync(dir+'/'+f,'utf8')).join('\n')+'\n;return {Store, CURRICULUM, SPANISH, GERMAN};';
 // The older tests below were written before subjects existed. They now test the Data subject:
 // questions and actions go to Store.subject('data'); saving, backup and dates stay on the Store.
 const WHOLE=new Set(['init','SignInNeeded','signIn','signOut','email','flush','importJSON','exportJSON','storageOk','problem','mode','fresh','sessionKey','LoadError','onChange','onStatus','today','weekOf','addDays','subject','subjects','active','isLightWeek','setLightWeek','setTheme','minimumThisWeek','lastSessionAnywhere']);
@@ -305,6 +305,45 @@ await t('side module: progress travels in export/import and survives Start over 
   const d=b.subject('data'); d.setPortfolioLink('fin-variance','https://github.com/me/variance'); const before=d.startOver();
   assert.ok(!d.isDone('fin-olap')); assert.equal(d.state.portfolioLinks['fin-variance'],'https://github.com/me/variance');
   d.restore(before); assert.ok(d.isDone('fin-olap')); });
+
+// ─── Optional tasks (the CS50 video and submission) ───
+await t('optional tasks: never on Today or in the day count, but tickable on the Map', async()=>{
+  const m=boot(memStorage()).Store; await m.init();
+  assert.ok(!m.tasks().some(x=>x.task.optional)); assert.ok(m.find('tel-video').optional);
+  const tel=m.find('tel-readme').module; tel.tasks.filter(x=>!x.optional).forEach(x=>m.setDone(x.id,true));
+  assert.equal(m.moduleStats(tel).complete,true); assert.equal(m.moduleStats(tel).total,tel.tasks.length-2);
+  assert.notEqual(m.current().module.id,'telecom');
+  m.markDone('tel-video',60,''); assert.ok(m.isDone('tel-video')); assert.equal(m.state.sessionLog.at(-1).taskId,'tel-video'); });
+
+// ─── Portfolio site side module ───
+await t('site module: locked until the telecom README is done; then on Today; untick locks it again', async()=>{
+  const m=boot(memStorage()).Store; await m.init(); const site=m.side('site');
+  assert.equal(site.locked(),true); assert.equal(site.current(),null); assert.equal(m.totalDays(),180);
+  assert.ok(!m.tasks().some(x=>x.task.id.startsWith('site-')));
+  m.setDone('tel-readme',true); assert.equal(site.locked(),false); assert.equal(site.current().task.id,'site-rules');
+  m.setDone('tel-readme',false); assert.equal(site.current(),null); });
+await t('site module: card reminders wait for their project; stretch steps never on Today', async()=>{
+  const m=boot(memStorage()).Store; await m.init(); const site=m.side('site'); m.setDone('tel-readme',true);
+  site.tasks().filter(x=>!x.task.unlockedBy).forEach(x=>m.setDone(x.task.id,true));
+  assert.equal(site.current(),null); assert.equal(site.isFinished(),false);
+  assert.deepEqual(site.waiting().map(w=>w.waitsFor.task.id),['bva-readme','mail-readme']);
+  assert.ok(!site.tasks().some(x=>x.task.optional));
+  m.setDone('bva-readme',true); assert.equal(site.current().task.id,'site-card-pbi');
+  m.setDone('site-card-pbi',true); m.setDone('mail-readme',true); m.setDone('site-card-py',true);
+  assert.equal(site.isFinished(),true); assert.equal(m.side('fin').isFinished(),false); });
+
+// ─── The switch to CS50 SQL, with the real backup from 12 Nov ───
+await t('backup from before the switch: 10 tasks kept, next is CS50 set-up on day 11; Spanish untouched', async()=>{
+  // Point CLIMB_BACKUP at the export from 12 Nov to run this one; it's skipped otherwise.
+  const file=process.env.CLIMB_BACKUP; if(!file || !fs.existsSync(file)) return;
+  const raw=fs.readFileSync(file,'utf8'); const {Store:St}=boot(memStorage()); await St.init(); St.importJSON(raw);
+  const d=St.real.subject('data'), es=St.real.subject('spanish');
+  assert.equal(d.state.completedTaskIds.length,10); assert.ok(d.state.completedTaskIds.every(id=>d.find(id)));
+  assert.equal(d.moduleStats(d.find('cheatsheet-start').module).complete,true);
+  assert.equal(d.current().task.id,'cs50-setup'); assert.equal(d.currentDay(),11);
+  assert.equal(d.state.sessionLog.reduce((a,s)=>a+s.minutes,0),350);
+  const before=JSON.parse(raw).progress.subjects.spanish;
+  assert.deepEqual(es.state.completedTaskIds,before.completedTaskIds); assert.deepEqual(es.state.sessionLog,before.sessionLog); });
 
 console.log(`\n${pass} passed`);
 })().catch(e=>{ console.error(e); process.exit(1); });

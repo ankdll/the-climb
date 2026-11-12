@@ -77,7 +77,10 @@ const Store = (function () {
       plan: () => CURRICULUM,
       // Short extras beside the plan (sidemodule-*.js). They never change the
       // day count; see "Side modules" below.
-      sideModules: () => [typeof SIDE_FINANCE !== "undefined" ? SIDE_FINANCE : null],
+      sideModules: () => [
+        typeof SIDE_FINANCE !== "undefined" ? SIDE_FINANCE : null,
+        typeof SIDE_SITE !== "undefined" ? SIDE_SITE : null
+      ],
       hours: { normal: "5–7 hrs", light: "9–10 hrs" },
       defaultTarget: 5,
       lightWeek: {
@@ -85,7 +88,7 @@ const Store = (function () {
         maxPerWeek: 3,
         weekdaysOnly: true,
         label: "Extra hour: get ahead, or work on your deliverable",
-        detail: "Light week bonus. Push on with the next tasks above, or spend it on this phase's piece of portfolio work. Two or three of these this week.",
+        detail: "Light week bonus. Push on with the next tasks above, or spend it on this phase's portfolio project or your portfolio site. Two or three of these this week.",
         url: ""
       }
     },
@@ -477,8 +480,9 @@ const Store = (function () {
 
     // Every task in order, with its phase, module and suggested day number.
     // Tasks inside a module are spread evenly across that module's days.
-    // Side-module tasks are NOT in this list (so they never change the day
-    // count), but find() knows them, so ticking and logging them works.
+    // Side-module tasks and optional tasks are NOT in this list (so they never
+    // change the day count or show on Today), but find() knows them, so ticking
+    // and logging them on the Map works.
     function tasks() {
       if (flat) return flat;
       flat = [];
@@ -486,8 +490,10 @@ const Store = (function () {
       plan.phases.forEach((phase) => {
         phase.modules.forEach((module) => {
           const span = module.dayEnd - module.dayStart + 1;
-          const n = module.tasks.length;
-          module.tasks.forEach((task, i) => {
+          const required = module.tasks.filter((t) => !t.optional);
+          const n = required.length;
+          module.tasks.filter((t) => t.optional).forEach((task) => byId.set(task.id, { task, phase, module, day: null, optional: true }));
+          required.forEach((task, i) => {
             const entry = {
               task,
               phase,
@@ -502,7 +508,7 @@ const Store = (function () {
       });
       sideModules.forEach((sm) => {
         sm.modules.forEach((module) => {
-          module.tasks.forEach((task) => byId.set(task.id, { task, phase: null, module, side: sm, day: null }));
+          module.tasks.forEach((task) => byId.set(task.id, { task, phase: null, module, side: sm, day: null, optional: !!task.optional }));
         });
       });
       return flat;
@@ -562,9 +568,11 @@ const Store = (function () {
       return tasks().every((t) => isDone(t.task.id));
     }
 
+    // Optional tasks don't count toward a module being complete.
     function moduleStats(module) {
-      const total = module.tasks.length;
-      const done = module.tasks.filter((t) => isDone(t.id)).length;
+      const required = module.tasks.filter((t) => !t.optional);
+      const total = required.length;
+      const done = required.filter((t) => isDone(t.id)).length;
       return { done, total, complete: done === total };
     }
 
@@ -625,7 +633,7 @@ const Store = (function () {
         if (m) {
           const s = moduleStats(m);
           // Tasks still to do up to and including that module.
-          const end = tasks().findIndex((t) => t.module.id === m.id) + m.tasks.length;
+          const end = tasks().findIndex((t) => t.module.id === m.id) + s.total;
           const left = tasks().slice(0, end).filter((t) => !isDone(t.task.id)).length;
           return { module: m, left, inModule: s.total - s.done };
         }
@@ -839,12 +847,17 @@ const Store = (function () {
     // has its own "next task", and is left out of the day count and the
     // plan's finished check.
 
+    // A side module can be locked until a Data task is done (sm.unlockedBy),
+    // and a single task can wait for one (task.unlockedBy, a task id). Both are
+    // worked out from the ticks each time, so unticking locks them again.
     function makeSide(sm) {
       const list = [];
       sm.modules.forEach((module) => {
-        module.tasks.forEach((task, i) => list.push({ task, phase: null, module, side: sm, day: null, index: list.length }));
+        module.tasks.filter((t) => !t.optional).forEach((task) => list.push({ task, phase: null, module, side: sm, day: null, index: list.length }));
       });
-      const sideUpcoming = (count) => upcoming(count, list);
+      const isLocked = () => !!(sm.unlockedBy && !isDone(sm.unlockedBy.taskId));
+      const waits = (t) => !!(t.task.unlockedBy && !isDone(t.task.unlockedBy));
+      const sideUpcoming = (count) => (isLocked() ? [] : upcoming(count, list.filter((t) => !waits(t))));
       return {
         id: sm.id,
         name: sm.name,
@@ -852,6 +865,9 @@ const Store = (function () {
         tasks: () => list,
         upcoming: sideUpcoming,
         current: () => sideUpcoming(1)[0] || null,
+        locked: isLocked,
+        // Unfinished tasks still waiting for another task, with what they wait for.
+        waiting: () => list.filter((t) => waits(t) && !isDone(t.task.id)).map((t) => ({ entry: t, waitsFor: find(t.task.unlockedBy) })),
         isFinished: () => list.every((t) => isDone(t.task.id)),
         done: () => list.filter((t) => isDone(t.task.id)).length,
         minutesLeft: () => list.filter((t) => !isDone(t.task.id)).reduce((sum, t) => sum + t.task.estimatedMinutes, 0)
