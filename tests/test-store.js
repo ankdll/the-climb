@@ -1,7 +1,7 @@
 // Tests for the data layer (store.js) using a pretend browser storage. Run: node tests/test-store.js
 const fs=require('fs'), assert=require('assert/strict');
 const dir=require('path').join(__dirname,'..','climb');
-const code=['curriculum.js','sidemodule-finance.js','sidemodule-site.js','spanish.js','german.js','store.js'].map(f=>fs.readFileSync(dir+'/'+f,'utf8')).join('\n')+'\n;return {Store, CURRICULUM, SPANISH, GERMAN};';
+const code=['curriculum.js','sidemodule-finance.js','sidemodule-site.js','sidemodule-etl.js','spanish.js','german.js','store.js'].map(f=>fs.readFileSync(dir+'/'+f,'utf8')).join('\n')+'\n;return {Store, CURRICULUM, SPANISH, GERMAN};';
 // The older tests below were written before subjects existed. They now test the Data subject:
 // questions and actions go to Store.subject('data'); saving, backup and dates stay on the Store.
 const WHOLE=new Set(['init','SignInNeeded','signIn','signOut','email','flush','importJSON','exportJSON','storageOk','problem','mode','fresh','sessionKey','LoadError','onChange','onStatus','today','weekOf','addDays','subject','subjects','active','isLightWeek','setLightWeek','setTheme','minimumThisWeek','lastSessionAnywhere']);

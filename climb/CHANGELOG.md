@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-11-13: Mailing list pipeline becomes an ETL project
+
+- Phase 3's *Mailing list cleaning pipeline* keeps its name, and its description now says it's an ETL pipeline: Extract → Transform → Load → Report.
+- New tasks: set up the script as those four steps (you write the code yourself); log every step to a file with timestamps and row counts; incremental load, where a second run adds 0 rows and the README explains how.
+- "Flag rows for review" is now "Validation checks, with a count per check" (same id, 60 minutes). Flagged rows still stay. The summary report also shows the run time. The README's key findings use the counts from the log.
+- That adds about 3 hours (Phase 3 is now about 35). Days were re-spread by hours, still 180: SQL days 1–78, Power BI 79–129, Python 130–180. The mailing list project is days 160–176. Phase 4 is unchanged (days 181–207).
+
+## 2026-11-13: ETL Basics side module
+
+- A side module under Data, *ETL Basics*, in its own file (`sidemodule-etl.js`): about 3 hours over 5 tasks, none longer than 40 minutes, so it suits a lighter week. Available now. Data's day count and 180 days don't change.
+- Tasks: what ETL is and ETL vs ELT (and why warehouses moved to ELT); full vs incremental loads, watermarks and key-based dedupe; idempotent pipelines; data quality checks and logging; a 5-line answer on ETL done in Excel/VBA, for interviews.
+- Free sources only: IBM Think, AWS, Microsoft Learn, SQLite's docs, Start Data Engineering and Python's docs. All links checked on 2026-11-13.
+
 ## 2026-11-12 (later): Phase 4, Data Engineering
 
 - A new Phase 4 after day 180, about 20 hours over 27 days, on the Mac. Phases 1–3 still fill the 180 days. Today says "Day N of 180" until then, and "Phase 4 · Day X of 27" in Phase 4.

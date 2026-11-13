@@ -37,7 +37,7 @@ for(const {name, plan, needsSkill} of PLANS){
 }
 // Side modules: no days, but the same task rules, and ids unique across everything.
 const dataIds=new Set(PLANS[0].plan.phases.flatMap(p=>p.modules.flatMap(m=>m.tasks.map(t=>t.id))));
-for(const [file,name] of [['sidemodule-finance.js','SIDE_FINANCE'],['sidemodule-site.js','SIDE_SITE']]){
+for(const [file,name] of [['sidemodule-finance.js','SIDE_FINANCE'],['sidemodule-site.js','SIDE_SITE'],['sidemodule-etl.js','SIDE_ETL']]){
   const sm=load(file,name); let n=0, mins=0;
   for(const m of sm.modules){ if(!m.tasks.length) errs.push(`${name}: module ${m.id} has no tasks`);
     for(const t of m.tasks){ n++; mins+=t.estimatedMinutes;

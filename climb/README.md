@@ -10,7 +10,7 @@ It's set up like a small school:
 | Spanish | Minor | about 2 hrs | 3–4 hrs | `spanish.js` |
 | German | Elective | 1–2 hrs, once unlocked | no extra | `german.js` |
 
-Plus two **side modules** under Data, which don't change Data's 180 days: *Finance & SAP Reporting Basics* (about 6.5 hours over 2–3 weeks, `sidemodule-finance.js`) and *Portfolio site* (about 28 hours plus 6 optional, `sidemodule-site.js`), which unlocks once the SQL project is finished.
+Plus three **side modules** under Data, which don't change Data's 180 days: *Finance & SAP Reporting Basics* (about 6.5 hours over 2–3 weeks, `sidemodule-finance.js`), *Portfolio site* (about 28 hours plus 6 optional, `sidemodule-site.js`), which unlocks once the SQL project is finished, and *ETL Basics* (about 3 hours, `sidemodule-etl.js`).
 
 ---
 
@@ -73,7 +73,7 @@ Double-click **`index.html`** in this folder. It opens in your browser and saves
 ## Your two machines
 
 - **The Mac is your main machine.** Use the app there for everything.
-- **The Windows machine is for the Power BI work in Phase 2 (days 80–133)**, and tasks 9–10 of the Finance side module. Power BI Desktop and Excel's Data Model only run on Windows.
+- **The Windows machine is for the Power BI work in Phase 2 (days 79–129)**, and tasks 9–10 of the Finance side module. Power BI Desktop and Excel's Data Model only run on Windows.
 
 With the online version there's nothing to copy: open the link in Chrome on Windows, sign in once, and it's the same progress as the Mac.
 
@@ -115,7 +115,7 @@ The local copy keeps progress in Chrome's storage for that page, which does **no
 - **German** stays locked until you mark the Spanish Term 2 exam done. Untick the exam and it locks again (its progress is kept). Only the first task is written; ask Claude Code for the rest when it unlocks.
 - **Light week** (the switch near the bottom of Today) is for a lighter work week. It adds an extra hour of Data on two or three weekdays and 15 more minutes of Spanish listening a day, never anything for German. It's on for the current week only and switches off on Monday.
 - **The bad-week minimum** under it: 3 hours of Data, plus one Spanish session so the Spanish streak keeps going. It shows where this week stands.
-- **Side modules** are extras beside a subject's plan. Data has two: *Finance & SAP Reporting Basics* (10 tasks, about 6.5 hours) and *Portfolio site* (below). Each one shows on Today as its own group under Data, with its own next task, Done and Not today, until every task is done; then it leaves Today. It always stays at the bottom of Data's Map, where tasks can be ticked or unticked. It never changes Data's day count or the 180 days. Its time does count toward Data's hours, streak and the bad-week minimum, because it's Data study. Finishing it adds a skill line on Data's Progress.
+- **Side modules** are extras beside a subject's plan. Data has three: *Finance & SAP Reporting Basics* (10 tasks, about 6.5 hours), *Portfolio site* (below) and *ETL Basics* (5 tasks, about 3 hours, short enough for a lighter week). Each one shows on Today as its own group under Data, with its own next task, Done and Not today, until every task is done; then it leaves Today. It always stays at the bottom of Data's Map, where tasks can be ticked or unticked. It never changes Data's day count or the 180 days. Its time does count toward Data's hours, streak and the bad-week minimum, because it's Data study. Finishing it adds a skill line on Data's Progress.
 - **Portfolio site** is locked until you finish the Telecom complaints database (its README task); untick that and it locks again. Then it's on Today like the Finance module. Every task is an hour or less, so it suits a lighter week. Its "add this card to your site" tasks for the Power BI and Python projects appear once each project is finished; until then the Map says what they're waiting for. Steps 8 and 9 are optional stretch steps.
 - **Optional tasks** (the CS50 video and submission, and the site's stretch steps) are on the Map marked "Optional". They never appear on Today, and a module is finished without them. Tick them on the Map when you do them.
 - **Phase 4** starts after day 180 and counts its own days: Today shows "Phase 4 · Day 3 of 27" rather than going past 180. Its main course is Start Data Engineering's free *Data Engineering 101*, without its SQL, Python and Kimball chapters (Phases 1–3 cover those). It runs on the Mac, with Docker. A short task right after the Docker set-up asks you to check the hour estimates.
@@ -131,7 +131,7 @@ The local copy keeps progress in Chrome's storage for that page, which does **no
 
 ## Changing the plan
 
-Data's plan is in **`curriculum.js`**. Spanish's is in **`spanish.js`**: same shape, but the weeks are built by short recipes at the bottom of the file, so a change to "every Saturday" is made once. German's is in **`german.js`**. Data's side modules are in **`sidemodule-finance.js`** and **`sidemodule-site.js`**: same task shape, grouped in modules, with no days. You can open it in any text editor, or describe the change to Claude Code (see the end of this section). The rule that keeps your progress safe:
+Data's plan is in **`curriculum.js`**. Spanish's is in **`spanish.js`**: same shape, but the weeks are built by short recipes at the bottom of the file, so a change to "every Saturday" is made once. German's is in **`german.js`**. Data's side modules are in **`sidemodule-finance.js`**, **`sidemodule-site.js`** and **`sidemodule-etl.js`**: same task shape, grouped in modules, with no days. You can open it in any text editor, or describe the change to Claude Code (see the end of this section). The rule that keeps your progress safe:
 
 > **Never change a task's `id` once you've finished that task.** The id is how the app remembers it's done. Everything else (wording, link, time, order) is safe to change.
 
@@ -197,6 +197,7 @@ node tests/check-curriculum.js
 | `curriculum.js` | Data's plan: every phase, module and task. |
 | `sidemodule-finance.js` | Data's side module, Finance & SAP Reporting Basics: 10 tasks and its Portfolio card. |
 | `sidemodule-site.js` | Data's side module, Portfolio site: steps 0–9, the project-card reminders, and its Portfolio card. |
+| `sidemodule-etl.js` | Data's side module, ETL Basics: 5 tasks, no Portfolio card. |
 | `spanish.js` | Spanish's plan: three terms of weeks, with the two exams. |
 | `german.js` | German's plan: the structure only, for now. |
 | `store.js` | Signing in, saving and loading your progress (Supabase online, the browser locally), and working out where you are. |

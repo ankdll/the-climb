@@ -79,7 +79,8 @@ const Store = (function () {
       // day count; see "Side modules" below.
       sideModules: () => [
         typeof SIDE_FINANCE !== "undefined" ? SIDE_FINANCE : null,
-        typeof SIDE_SITE !== "undefined" ? SIDE_SITE : null
+        typeof SIDE_SITE !== "undefined" ? SIDE_SITE : null,
+        typeof SIDE_ETL !== "undefined" ? SIDE_ETL : null
       ],
       hours: { normal: "5–7 hrs", light: "9–10 hrs" },
       defaultTarget: 5,

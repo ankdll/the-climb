@@ -43,7 +43,7 @@ const CURRICULUM = {
       name: "SQL Foundations",
       shortName: "SQL",
       dayStart: 1,
-      dayEnd: 79,
+      dayEnd: 78,
       estimatedHours: 55,
       why: "SQL is the most-requested skill in every analytics job post and pays back fastest per hour spent.",
       deliverable: "A SQLite database of FCC consumer complaints: your own schema, the data loaded and cleaned, and 10–15 business questions answered with CTEs and window functions. It's also your CS50 SQL final project.",
@@ -300,7 +300,7 @@ const CURRICULUM = {
           id: "cs50-scaling",
           name: "CS50 SQL weeks 4–6: Viewing, optimizing and scaling",
           dayStart: 35,
-          dayEnd: 49,
+          dayEnd: 48,
           skill: "Build views and indexes, make slow queries fast, and explain how MySQL and PostgreSQL differ from SQLite",
           tasks: [
             {
@@ -388,8 +388,8 @@ const CURRICULUM = {
         {
           id: "sql-windows",
           name: "CTEs and window functions",
-          dayStart: 50,
-          dayEnd: 55,
+          dayStart: 49,
+          dayEnd: 54,
           skill: "Write CTEs and window functions (ROW_NUMBER, RANK, LAG, running totals)",
           tasks: [
             {
@@ -445,8 +445,8 @@ const CURRICULUM = {
         {
           id: "git",
           name: "Git and GitHub",
-          dayStart: 56,
-          dayEnd: 64,
+          dayStart: 55,
+          dayEnd: 62,
           skill: "Version-control work with Git and share it on GitHub",
           tasks: [
             {
@@ -518,8 +518,8 @@ const CURRICULUM = {
         {
           id: "telecom",
           name: "Portfolio project: Telecom complaints database",
-          dayStart: 65,
-          dayEnd: 79,
+          dayStart: 63,
+          dayEnd: 78,
           skill: "Design, load and analyse a real database end to end in SQL, documented for others",
           tasks: [
             {
@@ -668,8 +668,8 @@ const CURRICULUM = {
       id: "powerbi",
       name: "Power BI, Power Query & DAX",
       shortName: "Power BI",
-      dayStart: 80,
-      dayEnd: 133,
+      dayStart: 79,
+      dayEnd: 129,
       estimatedHours: 37,
       why: "Power BI is in most analyst job posts, and Power Query is the closest thing to what you already do every day.",
       deliverable: "A Power BI budget vs actual dashboard on Microsoft's AdventureWorks finance data: cleaned in Power Query, a star schema, and DAX for variance and year-to-date. On GitHub as a Power BI project with screenshots.",
@@ -679,8 +679,8 @@ const CURRICULUM = {
         {
           id: "pq-excel",
           name: "Power Query inside Excel",
-          dayStart: 80,
-          dayEnd: 88,
+          dayStart: 79,
+          dayEnd: 86,
           skill: "Clean and reshape data repeatably with Power Query",
           tasks: [
             {
@@ -752,8 +752,8 @@ const CURRICULUM = {
         {
           id: "pbi-basics",
           name: "Power BI Desktop basics",
-          dayStart: 89,
-          dayEnd: 97,
+          dayStart: 87,
+          dayEnd: 94,
           skill: "Load, shape and visualise data in Power BI Desktop",
           tasks: [
             {
@@ -817,8 +817,8 @@ const CURRICULUM = {
         {
           id: "pbi-modeling",
           name: "Data modeling — star schema",
-          dayStart: 98,
-          dayEnd: 107,
+          dayStart: 95,
+          dayEnd: 104,
           skill: "Build a star schema in Power BI with fact and dimension tables",
           tasks: [
             {
@@ -898,8 +898,8 @@ const CURRICULUM = {
         {
           id: "dax",
           name: "DAX core",
-          dayStart: 108,
-          dayEnd: 118,
+          dayStart: 105,
+          dayEnd: 115,
           skill: "Write DAX measures using CALCULATE, filter context and time intelligence",
           tasks: [
             {
@@ -979,8 +979,8 @@ const CURRICULUM = {
         {
           id: "bva",
           name: "Portfolio project: Budget vs actual dashboard",
-          dayStart: 119,
-          dayEnd: 133,
+          dayStart: 116,
+          dayEnd: 129,
           skill: "Build a budget vs actual dashboard end to end: Power Query, star schema, variance and year-to-date DAX",
           tasks: [
             {
@@ -1103,19 +1103,19 @@ const CURRICULUM = {
       id: "python",
       name: "Python for Data",
       shortName: "Python",
-      dayStart: 134,
+      dayStart: 130,
       dayEnd: 180,
-      estimatedHours: 32,
+      estimatedHours: 35,
       why: "The goal isn't to become a software engineer — it's to read, modify and debug a data script, and write a straightforward one from scratch.",
-      deliverable: "A Python pipeline that cleans fake, messy contact data: standardised, duplicates and problem rows flagged in helper columns (nothing deleted), loaded into SQLite, with a summary report.",
+      deliverable: "A Python ETL pipeline that cleans fake, messy contact data in Extract → Transform → Load → Report steps: standardised, duplicates and problem rows flagged in helper columns (nothing deleted), loaded into SQLite incrementally so a rerun adds nothing, with a log file and a summary report.",
       deliverableName: "Mailing list cleaning pipeline",
       linkHint: "https://github.com/your-name/mailing-list-pipeline",
       modules: [
         {
           id: "py-basics",
           name: "Python basics",
-          dayStart: 134,
-          dayEnd: 143,
+          dayStart: 130,
+          dayEnd: 139,
           skill: "Write Python with variables, loops, functions and file handling",
           tasks: [
             {
@@ -1195,8 +1195,8 @@ const CURRICULUM = {
         {
           id: "pandas",
           name: "pandas",
-          dayStart: 144,
-          dayEnd: 153,
+          dayStart: 140,
+          dayEnd: 149,
           skill: "Load, filter, group, merge and clean tabular data with pandas",
           tasks: [
             {
@@ -1276,8 +1276,8 @@ const CURRICULUM = {
         {
           id: "py-cleaning",
           name: "Cleaning and reshaping with pandas",
-          dayStart: 154,
-          dayEnd: 158,
+          dayStart: 150,
+          dayEnd: 154,
           skill: "Load messy files, then clean, combine and reshape them with pandas",
           tasks: [
             {
@@ -1317,8 +1317,8 @@ const CURRICULUM = {
         {
           id: "py-automate",
           name: "Files, spreadsheets and CSV from Python",
-          dayStart: 159,
-          dayEnd: 163,
+          dayStart: 155,
+          dayEnd: 159,
           skill: "Read and write files, Excel workbooks, Google Sheets and CSV/JSON from Python",
           tasks: [
             {
@@ -1358,14 +1358,14 @@ const CURRICULUM = {
         {
           id: "mailing",
           name: "Portfolio project: Mailing list cleaning pipeline",
-          dayStart: 164,
+          dayStart: 160,
           dayEnd: 176,
-          skill: "Build a repeatable cleaning pipeline in Python: standardise, deduplicate, flag for review, load into SQLite and report",
+          skill: "Build an ETL pipeline in Python: extract, standardise, deduplicate, validate with counted checks, load incrementally into SQLite without duplicates on a rerun, log each step, and report",
           tasks: [
             {
               id: "mail-plan",
               label: "Mailing list pipeline: plan it",
-              detail: "Ground rule for every portfolio project: you write the SQL, DAX and Python yourself. Claude only helps with the README layout. Write the steps in plain English: make the data, clean, standardise, find duplicates, flag rows for review, load into SQLite, write a summary. Two rules: fake data only, never client data; and never delete a row, flag it in a helper column instead.",
+              detail: "Ground rule for every portfolio project: you write the SQL, DAX and Python yourself. Claude only helps with the README layout. It's an ETL pipeline: Extract (read the raw file), Transform (clean, standardise, find duplicates, run the checks), Load (into SQLite), Report (a summary). Write each step in plain English under those four headings. Two rules: fake data only, never client data; and never delete a row, flag it in a helper column instead.",
               estimatedMinutes: 30,
               url: "",
               type: "build"
@@ -1376,6 +1376,14 @@ const CURRICULUM = {
               detail: "Install Faker and generate about 2,000 contacts. Then make them messy on purpose: mixed case, stray spaces, phone numbers in several formats, missing emails, the same person twice with small differences. Set a seed so you get the same file every run.",
               estimatedMinutes: 60,
               url: "https://faker.readthedocs.io/en/master/",
+              type: "build"
+            },
+            {
+              id: "mail-structure",
+              label: "Set up the script as Extract → Transform → Load → Report",
+              detail: "You write the code yourself; Claude only explains error messages. Four functions, one per step, and a main part that runs them in order and passes the data along. Start with each one doing almost nothing (Extract reads the file, Load just prints the row count), then fill them in over the next tasks: the cleaning goes in Transform.",
+              estimatedMinutes: 45,
+              url: "https://docs.python.org/3/tutorial/controlflow.html#defining-functions",
               type: "build"
             },
             {
@@ -1404,9 +1412,9 @@ const CURRICULUM = {
             },
             {
               id: "mail-review",
-              label: "Flag rows for review",
-              detail: "A needs_review column and a review_reason column: bad email, no way to contact, a possible duplicate you weren't sure about. Count each reason.",
-              estimatedMinutes: 45,
+              label: "Validation checks, with a count per check",
+              detail: "In Transform, one check at a time: bad email, missing contact (no email and no phone), duplicate, plus any others you spot. Each failing row gets needs_review and a review_reason; flagged rows stay, nothing is deleted. Keep a count for each check: these counts go in the log and the report.",
+              estimatedMinutes: 60,
               url: "",
               type: "build"
             },
@@ -1419,10 +1427,26 @@ const CURRICULUM = {
               type: "build"
             },
             {
+              id: "mail-logging",
+              label: "Log every step to a file",
+              detail: "Use Python's logging module, writing to a log file with the date and time on every line. For each step, log when it starts and ends and the rows in and out; for Transform, also the count per validation check. Run it and read the log as if someone else wrote it.",
+              estimatedMinutes: 45,
+              url: "https://docs.python.org/3/howto/logging.html#logging-to-a-file",
+              type: "build"
+            },
+            {
+              id: "mail-incremental",
+              label: "Incremental load: a second run adds 0 rows",
+              detail: "Give each contact a key (an id, or cleaned email + name) and make the table refuse a key it already has, so Load only adds rows that are new. Run the whole pipeline twice: the log should say the second run added 0 rows. Note your approach in two or three sentences for the README.",
+              estimatedMinutes: 60,
+              url: "https://sqlite.org/lang_upsert.html",
+              type: "build"
+            },
+            {
               id: "mail-report",
               label: "Write the summary report",
-              detail: "The script writes a short report file: rows in, rows cleaned, duplicates found, rows needing review by reason. These numbers become your README's key findings.",
-              estimatedMinutes: 60,
+              detail: "The Report step writes a short report file: rows in, rows cleaned, rows loaded, the count for each validation check, and how long the run took (time it from start to end). These numbers become your README's key findings.",
+              estimatedMinutes: 75,
               url: "",
               type: "build"
             },
@@ -1445,7 +1469,7 @@ const CURRICULUM = {
             {
               id: "mail-readme",
               label: "Write the README (Phase 3 deliverable)",
-              detail: "In this order: the problem, the data, your approach, key findings with numbers, a screenshot, how to run it, and what you'd do next.",
+              detail: "In this order: the problem, the data, your approach, key findings with numbers, a screenshot, how to run it, and what you'd do next. The approach explains the incremental load (how a rerun adds 0 rows). The key findings use the counts from your log: rows in and out per step, the count per check, and the second run's 0 rows.",
               estimatedMinutes: 60,
               url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
               type: "build"
